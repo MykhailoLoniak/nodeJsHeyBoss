@@ -5,8 +5,7 @@
   "scripts": {
   "build": "tsc", 
   "start": "node dist/index.js"
-}
-
+},
   "author": "Mykhailo Loniak",
   "license": "ISC",
   "description": "",
