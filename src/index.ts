@@ -6,7 +6,7 @@ import chatSocket from "./controllers/chatController";
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 app.use(cors());
