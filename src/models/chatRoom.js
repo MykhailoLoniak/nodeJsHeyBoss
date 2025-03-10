@@ -3,7 +3,7 @@ const { client } = require('../utils/db.js');
 const { User } = require("./user");
 // const { UserChatRoom } = require('./userChatRoom.js');
 
-const ChatRoom = client.define("chatRoom", {
+const ChatRoom = client.define("chat_room", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
