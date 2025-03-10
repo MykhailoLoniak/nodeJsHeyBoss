@@ -1,11 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { client } = require('../utils/db.js');
 
-// import { DataTypes } from "sequelize";
-// import client from "../utils/bd";
-
 const User = client.define(
-  "users",
+  "user",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -17,10 +14,6 @@ const User = client.define(
       allowNull: false,
     },
     lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    phone: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -37,25 +30,19 @@ const User = client.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    avatarUrl: {
-      type: DataTypes.STRING,
-    },
-    dateOfBirth: {
-      type: DataTypes.STRING,
-    },
     activationToken: {
       type: DataTypes.STRING,
     },
     passwordResetToken: {
       type: DataTypes.STRING,
     },
+
   },
   {
-    freezeTableName: true, // Це змусить Sequelize використовувати ім'я "user" для таблиці
+    tableName: "users"
   }
 );
 
-// export default User;
 module.exports = {
   User,
 };
