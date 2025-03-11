@@ -43,7 +43,7 @@ const register = async (req, res) => {
   try {
     const { firstName: first_name, lastName: last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
 
-    const activationToken = uuid();
+    const activation_token = uuid();
 
     userServices.validateEmail(email);
     userServices.validatePassword(pass);
