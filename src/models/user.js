@@ -39,7 +39,8 @@ const User = client.define(
 
   },
   {
-    tableName: "users"
+    tableName: "users",
+    underscored: true,
   }
 );
 

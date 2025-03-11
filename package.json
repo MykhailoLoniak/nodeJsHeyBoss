@@ -3,16 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-<<<<<<< HEAD
-  "build": "tsc", 
-  "start": "node dist/index.js"
-},
-=======
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
->>>>>>> 8a7ea4b (fix)
-  "author": "Mykhailo Loniak",
+"author": "Mykhailo Loniak",
   "license": "ISC",
   "description": "",
   "devDependencies": {
