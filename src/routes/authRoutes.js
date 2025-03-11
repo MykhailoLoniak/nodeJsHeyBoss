@@ -14,7 +14,7 @@ const loginLimiter = rateLimit({
 
 
 router.post("/register", catchError(authController.register));
-router.get("/activation/:activationToken", catchError(authController.activate));
+router.get("/activation/:activation_token", catchError(authController.activate));
 router.post("/login", loginLimiter, catchError(authController.login));
 router.delete("/logout", catchError(authController.logout));
 router.get("/refresh", catchError(authController.refresh));

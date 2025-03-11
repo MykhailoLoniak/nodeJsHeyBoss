@@ -1,6 +1,7 @@
 require("dotenv/config");
 const nodemailer = require("nodemailer");
 // const PORT= process.env.PORT || 3005;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
 const transporter = nodemailer.createTransport({
   // host: process.env.SMTP_HOST,
@@ -22,8 +23,7 @@ function send({ email, subject, html }) {
 }
 
 function sendActivationEmail(email, token) {
-  const href = `http://localhost:3000/login/${token}`;
-  // const href = `${process.env.CLIENT_HOST}/api/auth/activation/${token}`;
+  const href = `${CLIENT_ORIGIN}/login/${token}`;
   const html = `
   <h1>Activate account</h1>
   <a target="_blank" href="${href}">${href}</a>
@@ -33,7 +33,7 @@ function sendActivationEmail(email, token) {
 }
 
 function passwordResetEmail(email, passwordResetToken) {
-  const href = `http://localhost:3000/password-reset/${passwordResetToken}`;
+  const href = `${CLIENT_ORIGIN}/password-reset/${passwordResetToken}`;
 
   const html = `
   <h1>Password reset</h1>
@@ -55,7 +55,9 @@ function changeEmail(email, newEmail) {
   return send({ email, html, subject: "Change email" });
 }
 
-exports.sendActivationEmail = sendActivationEmail;
-exports.send = send;
-exports.passwordResetEmail = passwordResetEmail;
-exports.changeEmail = changeEmail;
+module.exports = {
+  sendActivationEmail,
+  send,
+  passwordResetEmail,
+  changeEmail
+}
