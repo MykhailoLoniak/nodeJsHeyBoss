@@ -9,11 +9,11 @@ const User = client.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    firstName: {
+    first_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    lastName: {
+    last_name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -30,10 +30,10 @@ const User = client.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    activationToken: {
+    activation_token: {
       type: DataTypes.STRING,
     },
-    passwordResetToken: {
+    password_reset_token: {
       type: DataTypes.STRING,
     },
 

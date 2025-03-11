@@ -9,7 +9,7 @@ const ChatRoom = client.define("chatRoom", {
     primaryKey: true,
     autoIncrement: true,
   },
-  userIds: {
+  user_ids: {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
   },
@@ -21,6 +21,9 @@ const ChatRoom = client.define("chatRoom", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+},{
+  tableName: "chatRoom",
+  underscored: true,
 });
 
 module.exports = { ChatRoom };
