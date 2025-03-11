@@ -10,7 +10,7 @@ const ContractorDetails = client.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
@@ -33,6 +33,7 @@ const ContractorDetails = client.define(
   },
   {
     tableName: "contractor_details",
+    underscored: true,
   }
 );
 

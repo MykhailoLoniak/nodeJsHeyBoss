@@ -3,11 +3,11 @@ const { client } = require('../utils/db.js');
 const { User } = require('./user.js');
 
 const Token = client.define('token', {
-  refreshToken: {
+  refresh_token: {
     type: DataTypes.STRING(512),
     allowNull: false,
   },
-  userId: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -15,6 +15,9 @@ const Token = client.define('token', {
       key: 'id'
     }
   }
+}, {
+  table_name: "token",
+  underscored: true,
 });
 
 Token.belongsTo(User, { foreignKey: 'userId' });

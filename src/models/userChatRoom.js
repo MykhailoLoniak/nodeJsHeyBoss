@@ -9,7 +9,7 @@ const UserChatRoom = client.define("userChatRoom", {
     primaryKey: true,
     autoIncrement: true,
   },
-  chatRoomId: {
+  chat_room_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -17,7 +17,7 @@ const UserChatRoom = client.define("userChatRoom", {
       key: "id",
     },
   },
-  senderId: {
+  sender_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -30,10 +30,14 @@ const UserChatRoom = client.define("userChatRoom", {
     type: DataTypes.TEXT,
     allowNull: false
   },
-  lastReadMessageId: {
+  last_read_message_id: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+
+}, {
+  tableName: "userChatRoom",
+  underscored: true,
 });
 
 // ChatRoom.belongsTo(User, { foreignKey: "userId" });

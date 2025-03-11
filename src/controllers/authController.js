@@ -19,7 +19,7 @@ const generateTokens = async (res, user) => {
 
     console.log("tokenServices", tokenServices);
 
-    res.cookie("refreshToken", refreshAccessToken, {
+    res.cookie("refresh_token", refreshAccessToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       HttpOnly: true,
       secure: process.env.NODE_ENV === "production", // використовується тільки по HTTPS у продакшені
@@ -41,7 +41,7 @@ const generateTokens = async (res, user) => {
 
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password: pass, role, skills, experience, portfolio, } = req.body;
+    const { firstName: first_name, lastName: last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
 
     const activationToken = uuid();
 
@@ -56,20 +56,20 @@ const register = async (req, res) => {
 
     const password = await bcrypt.hash(pass, 10);
 
-    const newUser = await User.create({
-      firstName,
-      lastName,
+    const new_user = await User.create({
+      first_name,
+      last_name,
       email,
       password: password,
       role,
-      activationToken,
+      activation_token,
     });
 
-    await emailServices.sendActivationEmail(email, activationToken);
+    await emailServices.sendActivationEmail(email, activation_token);
 
     if (role === "contractor") {
       const newContactor = {
-        userId: newUser.id,
+        user_id: new_user.id,
         skills,
         experience,
         portfolio,
@@ -85,14 +85,14 @@ const register = async (req, res) => {
 
 const activate = async (req, res) => {
   try {
-    const { activationToken } = req.params;
-    const user = await User.findOne({ where: { activationToken } });
+    const { activation_token } = req.params;
+    const user = await User.findOne({ where: { activation_token } });
 
     if (!user) {
       throw ApiError.notFound(`No user found`);
     }
 
-    user.activationToken = null;
+    user.activation_token = null;
     await user.save();
 
     return res.send(userServices.normalize(user));
@@ -121,7 +121,7 @@ const login = async (req, res) => {
       throw ApiError.badRequest("Wrong password");
     }
 
-    if (user.activationToken) {
+    if (user.activation_token) {
       throw ApiError.forbidden("Confirm your email");
     }
 
@@ -142,7 +142,7 @@ const login = async (req, res) => {
           experience: detail.experience,
           portfolio: detail.portfolio,
         },
-        accessToken: tokens.accessToken,
+        access_token: tokens.access_token,
       };
     }
 
@@ -154,11 +154,11 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refresh_token } = req.cookies;
 
-    const userData = await jwtService.verifyRefresh(refreshToken);
+    const userData = await jwtService.verifyRefresh(refresh_token);
 
-    if (!userData || !refreshToken) {
+    if (!userData || !refresh_token) {
       throw ApiError.unauthorized();
     }
 
@@ -173,23 +173,23 @@ const logout = async (req, res) => {
 
 const refresh = async (req, res) => {
   try {
-    const { refreshToken } = req.cookies;
+    const { refresh_token } = req.cookies;
 
-    if (!refreshToken) {
+    if (!refresh_token) {
       throw ApiError.unauthorized("No refresh token provided");
     }
 
-    const userData = await jwtService.verifyRefresh(refreshToken);
+    const userData = await jwtService.verifyRefresh(refresh_token);
 
     if (!userData) {
-      res.clearCookie("refreshToken")
+      res.clearCookie("refresh_token")
       throw ApiError.unauthorized("Invalid refresh token");
     }
 
-    const token = await tokenServices.getByToken(refreshToken);
+    const token = await tokenServices.getByToken(refresh_token);
 
     if (!token) {
-      res.clearCookie("refreshToken");
+      res.clearCookie("refresh_token");
       throw ApiError.unauthorized("Refresh token not found");
     }
 
@@ -221,17 +221,17 @@ const requestPasswordReset = async (req, res) => {
     throw ApiError.notFound(`User not found`);
   }
 
-  const passwordResetToken = uuid();
+  const password_reset_token = uuid();
 
-  user.passwordResetToken = passwordResetToken;
+  user.password_reset_token = password_reset_token;
   await user.save();
-  await emailServices.passwordResetEmail(email, passwordResetToken);
+  await emailServices.passwordResetEmail(email, password_reset_token);
 
   res.send("Password reset link has been sent to your email");
 };
 
 const passwordReset = async (req, res) => {
-  const { passwordResetToken } = req.params;
+  const { password_reset_token } = req.params;
   const { password, confirmation } = req.body;
 
   if (!password || !confirmation) {
@@ -244,7 +244,7 @@ const passwordReset = async (req, res) => {
 
   userServices.validatePassword(password)
 
-  const user = await User.findOne({ where: { passwordResetToken } });
+  const user = await User.findOne({ where: { password_reset_token } });
 
   if (!user) {
     throw ApiError.badRequest(`Invalid or expired password reset token`);
@@ -253,7 +253,7 @@ const passwordReset = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   user.password = hashedPassword;
-  user.passwordResetToken = null;
+  user.password_reset_token = null;
   await user.save();
 
   res.send("Password has been reset successfully");

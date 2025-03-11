@@ -1,51 +1,45 @@
-require('dotenv/config');
-const { Sequelize } = require('sequelize');
-const { Token } = require('./src/models/token');
-const { User } = require('./src/models/user');
-const { ContractorDetails } = require('./src/models/contractorDetails');
-const { ChatRoom } = require('./src/models/chatRoom');
-const { UserChatRoom } = require('./src/models/userChatRoom');
+const { Sequelize } = require("sequelize");
+const { User } = require("./src/models/user");
+const { ChatRoom } = require("./src/models/chatRoom");
+const { ContractorDetails } = require("./src/models/contractorDetails");
+const { Token } = require("./src/models/token");
+const { UserChatRoom } = require("./src/models/userChatRoom");
 
-const client = new Sequelize('postgresql://misha:fZVyiAfECbis62yQNdCXE1ZI8GaP5LUv@dpg-cv7i7ihc1ekc738pe990-a.oregon-postgres.render.com/localhost_1u8k', {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+// Підключення до бази даних
+const client = new Sequelize(
+  "postgresql://misha:fZVyiAfECbis62yQNdCXE1ZI8GaP5LUv@dpg-cv7i7ihc1ekc738pe990-a.oregon-postgres.render.com/localhost_1u8k",
+  {
+    dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  },
-  logging: (msg) => console.log(msg),  // Логування запитів до бази даних
-});
+  }
+);
 
-async function setup() {
+// Функція для синхронізації моделей
+async function syncDatabase() {
   try {
-    // Перевірка підключення до бази
+    console.log("Синхронізація таблиць...");
+
+    // Переконайтеся, що підключення працює
     await client.authenticate();
-    console.log('✅ Підключення до бази успішне!');
+    console.log("Підключення до бази успішне!");
 
-    // Пробний запит до бази даних
-    await client.query('SELECT 1 + 1 AS result')
-      .then((result) => {
-        console.log('Запит до бази виконано:', result);
-      })
-      .catch((err) => {
-        console.error('❌ Помилка при виконанні запиту:', err);
-      });
+    // Видаляє і створює таблиці заново
+    await client.sync({ force: true });
 
-    // Синхронізація моделей з базою даних
-    const models = [Token, User, ContractorDetails, ChatRoom, UserChatRoom];
-
-    for (const model of models) {
-      await model.sync({ force: true });
-    }
-
-    console.log('✅ Всі таблиці створено!');
+    console.log("Таблиці були успішно створені!");
 
   } catch (error) {
-    console.error('❌ Помилка під час підключення до бази:', error);
+    console.error("Помилка при синхронізації таблиць:", error);
   } finally {
-    process.exit(0); // Вихід з процесу після завершення
+    // Закриваємо підключення
+    await client.close();
   }
 }
 
-setup();
+// Викликаємо функцію
+syncDatabase();

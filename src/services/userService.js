@@ -8,20 +8,20 @@ async function getUser(id) {
   return User.findOne({ where: { id } });
 }
 
-function normalize({ id, email, firstName, lastName, role }) {
-  return { id, email, firstName, lastName, role };
+function normalize({ id, email, first_name, last_name, role }) {
+  return { id, email, first_name, last_name, role };
 }
 
 async function findByEmail(email) {
   return await User.findOne({ where: { email } });
 }
 
-const getUserToken = async (userId) => {
-  return Token.findOne({ where: { userId } });
+const getUserToken = async (user_id) => {
+  return Token.findOne({ where: { user_id } });
 };
 
-const findByIdDetail = async (userId) => {
-  return await ContractorDetails.findOne({ where: { userId } });
+const findByIdDetail = async (user_id) => {
+  return await ContractorDetails.findOne({ where: { user_id } });
 };
 
 function validateEmail(email) {
