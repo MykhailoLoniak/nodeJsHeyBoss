@@ -231,7 +231,7 @@ const requestPasswordReset = async (req, res) => {
 };
 
 const passwordReset = async (req, res) => {
-  const { 'password-reset-token': password_reset_token } = req.params;
+  const password_reset_token = req.params['password-reset-token'];
   const { password, confirmation } = req.body;
 
   if (!password || !confirmation) {
