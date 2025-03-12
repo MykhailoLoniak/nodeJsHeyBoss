@@ -234,6 +234,11 @@ const passwordReset = async (req, res) => {
   const password_reset_token = req.params['password-reset-token'];
   const { password, confirmation } = req.body;
 
+  console.log(password_reset_token);
+  console.log(password);
+  console.log(confirm);
+
+
   if (!password || !confirmation) {
     throw ApiError.badRequest("Password is required");
   }
