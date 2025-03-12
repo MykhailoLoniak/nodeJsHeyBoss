@@ -14,11 +14,11 @@ const loginLimiter = rateLimit({
 
 
 router.post("/register", catchError(authController.register));
-router.get("/activation/:activation_token", catchError(authController.activate));
+router.get("/activation/:activation-token", catchError(authController.activate));
 router.post("/login", loginLimiter, catchError(authController.login));
 router.delete("/logout", catchError(authController.logout));
 router.get("/refresh", catchError(authController.refresh));
 router.post("/request-password-reset", loginLimiter, catchError(authController.requestPasswordReset));
-router.put("/password-reset/:passwordResetToken", catchError(authController.passwordReset));
+router.put("/password-reset/:password-reset-token", catchError(authController.passwordReset));
 
 module.exports = router;
