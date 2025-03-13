@@ -82,8 +82,6 @@ const register = async (req, res) => {
       await ContractorDetails.create(newContractor);
     }
 
-    console.log("New user created:", new_user);
-
     res.send(new_user);
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -91,8 +89,6 @@ const register = async (req, res) => {
 };
 
 const activate = async (req, res) => {
-  console.log('useParam', req.params);
-
   try {
     const { token } = req.params;
     const user = await User.findOne({ where: { activation_token: token } });
@@ -241,25 +237,26 @@ const requestPasswordReset = async (req, res) => {
 
 const passwordReset = async (req, res) => {
   console.log('........................................');
-  const token = req.params;
-  const { password, confirmation } = req.body;
+  const { token } = req.params;
+  const { password } = req.body;
 
   console.log(token);
   console.log(password);
-  console.log(confirmation);
+  // console.log(confirmation);
 
 
-  if (!password || !confirmation) {
+  if (!password) {
     throw ApiError.badRequest("Password is required");
   }
 
-  if (password !== confirmation) {
-    throw ApiError.badRequest(`Passwords do not match.`);
-  }
+  // if (password !== confirmation) {
+  //   throw ApiError.badRequest(`Passwords do not match.`);
+  // }
 
   userServices.validatePassword(password)
+  console.log('........................................');
 
-  const user = await User.findOne({ where: { token } });
+  const user = await User.findOne({ where: { password_reset_token: token } });
 
   if (!user) {
     throw ApiError.badRequest(`Invalid or expired password reset token`);
@@ -268,8 +265,9 @@ const passwordReset = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   user.password = hashedPassword;
-  user.token = null;
+  user.password_reset_token = null;
   await user.save();
+  console.log('........................................');
 
   res.send("Password has been reset successfully");
 };
