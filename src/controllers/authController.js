@@ -236,25 +236,14 @@ const requestPasswordReset = async (req, res) => {
 };
 
 const passwordReset = async (req, res) => {
-  console.log('........................................');
   const { token } = req.params;
   const { password } = req.body;
-
-  console.log(token);
-  console.log(password);
-  // console.log(confirmation);
-
 
   if (!password) {
     throw ApiError.badRequest("Password is required");
   }
 
-  // if (password !== confirmation) {
-  //   throw ApiError.badRequest(`Passwords do not match.`);
-  // }
-
   userServices.validatePassword(password)
-  console.log('........................................');
 
   const user = await User.findOne({ where: { password_reset_token: token } });
 
@@ -267,7 +256,6 @@ const passwordReset = async (req, res) => {
   user.password = hashedPassword;
   user.password_reset_token = null;
   await user.save();
-  console.log('........................................');
 
   res.send("Password has been reset successfully");
 };
