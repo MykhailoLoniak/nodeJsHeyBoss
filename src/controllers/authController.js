@@ -40,17 +40,19 @@ const generateTokens = async (res, user) => {
 
 
 const register = async (req, res) => {
+  console.log(req.body);
+
   try {
-    const { firstName: first_name, lastName: last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
+    const { first_name, last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
 
     const activation_token = uuid();
 
     userServices.validateEmail(email);
     userServices.validatePassword(pass);
 
-    const existUser = await userServices.findByEmail(email);
+    const exist_user = await userServices.findByEmail(email);
 
-    if (existUser) {
+    if (exist_user) {
       throw ApiError.badRequest("User Already exist");
     }
 
@@ -65,28 +67,35 @@ const register = async (req, res) => {
       activation_token,
     });
 
+
+
     await emailServices.sendActivationEmail(email, activation_token);
 
     if (role === "contractor") {
-      const newContactor = {
+      const newContractor = {
         user_id: new_user.id,
         skills,
         experience,
         portfolio,
       };
 
-      await ContractorDetails.create(newContactor);
+      await ContractorDetails.create(newContractor);
     }
-    res.send(newUser);
+
+    console.log("New user created:", new_user);
+
+    res.send(new_user);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 };
 
 const activate = async (req, res) => {
+  console.log('useParam', req.params);
+
   try {
-    const { activation_token } = req.params;
-    const user = await User.findOne({ where: { activation_token } });
+    const { token } = req.params;
+    const user = await User.findOne({ where: { activation_token: token } });
 
     if (!user) {
       throw ApiError.notFound(`No user found`);
@@ -231,12 +240,13 @@ const requestPasswordReset = async (req, res) => {
 };
 
 const passwordReset = async (req, res) => {
-  const password_reset_token = req.params['password-reset-token'];
+  console.log('........................................');
+  const token = req.params;
   const { password, confirmation } = req.body;
 
-  console.log(password_reset_token);
+  console.log(token);
   console.log(password);
-  console.log(confirm);
+  console.log(confirmation);
 
 
   if (!password || !confirmation) {
@@ -249,7 +259,7 @@ const passwordReset = async (req, res) => {
 
   userServices.validatePassword(password)
 
-  const user = await User.findOne({ where: { password_reset_token } });
+  const user = await User.findOne({ where: { token } });
 
   if (!user) {
     throw ApiError.badRequest(`Invalid or expired password reset token`);
@@ -258,7 +268,7 @@ const passwordReset = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   user.password = hashedPassword;
-  user.password_reset_token = null;
+  user.token = null;
   await user.save();
 
   res.send("Password has been reset successfully");
