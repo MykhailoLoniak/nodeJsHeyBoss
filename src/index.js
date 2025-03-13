@@ -3,6 +3,7 @@ const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/authRoutes");
 const clientRoutes = require("./routes/clientRouter");
@@ -20,10 +21,11 @@ const corsOptions = {
   credentials: true,
 };
 
+
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(errorMiddleware);
 
 setupWebSocketServer(server);
 
@@ -34,6 +36,8 @@ app.use("/chats", authMiddleware, chatRouters);
 app.get("/api/contractor", authMiddleware, (req, res) => {
   res.json({ message: "Welcome, Contractor!" });
 });
+
+app.use(errorMiddleware);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

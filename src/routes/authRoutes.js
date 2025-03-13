@@ -8,17 +8,20 @@ const router = Router();
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 хвилин
-  max: 10, // максимум 10 спроб
+  max: 100, // максимум 10 спроб
   message: "Too many login attempts, please try again later",
 });
 
 
 router.post("/register", catchError(authController.register));
-router.get("/activation/:activation-token", catchError(authController.activate));
+router.get("/activation/:token", catchError(authController.activate));
 router.post("/login", loginLimiter, catchError(authController.login));
 router.delete("/logout", catchError(authController.logout));
 router.get("/refresh", catchError(authController.refresh));
 router.post("/request-password-reset", loginLimiter, catchError(authController.requestPasswordReset));
-router.put("/password-reset/:password-reset-token", catchError(authController.passwordReset));
+router.put("/password-reset/:token", catchError(authController.passwordReset));
 
+
+console.log("Auth routes loaded.");
+console.log(router.stack.map(layer => layer.route?.path));
 module.exports = router;
