@@ -66,7 +66,9 @@ function sendActivationEmail(email, token) {
           margin-bottom: 20px;
         }
         .button {
-          display: inline-block;
+          display: block;
+          width: fit-content;
+          margin: 0 auto;
           padding: 10px 20px;
           background-color: #007bff;
           color: #ffffff;
