@@ -11,9 +11,9 @@
 **Відповідь (200 OK):**
 {  "id": 1,  "firstName": "John",  "lastName": "Doe",  "email": "johndoe@example.com",  "role": "contractor"}
 ### Активація акаунта
-**GET /activation/:activationToken**
+**GET /activation/:token**
 **Опис:** Активує акаунт користувача після реєстрації.
-**Параметри URL:**activationToken (string) – токен активації, отриманий через email.
+**Параметри URL:**token (string) – токен активації, отриманий через email.
 **Відповідь (200 OK):**
 {  "id": 1,  "firstName": "John",  "lastName": "Doe",  "email": "johndoe@example.com",  "role": "contractor"}
 ### Вхід у систему
@@ -41,9 +41,9 @@
 **Відповідь (200 OK):**
 {  "message": "Password reset link has been sent to your email"}
 ### Скидання пароля
-**PUT /password-reset/:passwordResetToken**
+**PUT /password-reset/:token**
 **Опис:** Встановлює новий пароль користувача.
-**Параметри URL:**passwordResetToken (string) – токен для скидання пароля, отриманий через email.
+**Параметри URL:**token (string) – токен для скидання пароля, отриманий через email.
 **Тіло запиту (JSON):**
 {  "password": "newpassword123",  "confirmation": "newpassword123"}
 **Відповідь (200 OK):**
