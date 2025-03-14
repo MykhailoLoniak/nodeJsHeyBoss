@@ -40,12 +40,12 @@ const generateTokens = async (res, user) => {
 
 
 const register = async (req, res) => {
-  console.log(req.body);
-
   try {
     const { first_name, last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
 
-    const activation_token = uuid();
+    if (!first_name && !last_name && !email && pass && role) {
+      throw ApiError.badRequest("Not all data was transferred");
+    }
 
     userServices.validateEmail(email);
     userServices.validatePassword(pass);
@@ -55,9 +55,10 @@ const register = async (req, res) => {
     if (exist_user) {
       throw ApiError.badRequest("User Already exist");
     }
-
+    
     const password = await bcrypt.hash(pass, 10);
-
+    const activation_token = uuid();
+    
     const new_user = await User.create({
       first_name,
       last_name,
@@ -67,10 +68,10 @@ const register = async (req, res) => {
       activation_token,
     });
 
-
-
+    
+    
     await emailServices.sendActivationEmail(email, activation_token);
-
+    
     if (role === "contractor") {
       const newContractor = {
         user_id: new_user.id,
@@ -81,7 +82,7 @@ const register = async (req, res) => {
 
       await ContractorDetails.create(newContractor);
     }
-
+    
     res.send(new_user);
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -91,6 +92,11 @@ const register = async (req, res) => {
 const activate = async (req, res) => {
   try {
     const { token } = req.params;
+    
+    if (!token) {
+      throw ApiError.badRequest("Token not passed");
+    }
+
     const user = await User.findOne({ where: { activation_token: token } });
 
     if (!user) {
