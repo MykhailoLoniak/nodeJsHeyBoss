@@ -55,10 +55,10 @@ const register = async (req, res) => {
     if (exist_user) {
       throw ApiError.badRequest("User Already exist");
     }
-    
+
     const password = await bcrypt.hash(pass, 10);
     const activation_token = uuid();
-    
+
     const new_user = await User.create({
       first_name,
       last_name,
@@ -68,11 +68,11 @@ const register = async (req, res) => {
       activation_token,
     });
 
-    
-    
+
+
     await emailServices.sendActivationEmail(email, activation_token);
-    
-    if (role === "contractor") {
+
+    if (role === "job_seeker") {
       const newContractor = {
         user_id: new_user.id,
         skills,
@@ -82,7 +82,7 @@ const register = async (req, res) => {
 
       await ContractorDetails.create(newContractor);
     }
-    
+
     res.send(new_user);
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -92,7 +92,7 @@ const register = async (req, res) => {
 const activate = async (req, res) => {
   try {
     const { token } = req.params;
-    
+
     if (!token) {
       throw ApiError.badRequest("Token not passed");
     }
