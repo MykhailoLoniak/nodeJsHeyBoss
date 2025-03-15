@@ -30,6 +30,15 @@ const User = client.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    country: {
+      type: DataTypes.STRING,
+    },
+    city: {
+      type: DataTypes.STRING,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+    },
     activation_token: {
       type: DataTypes.STRING,
     },

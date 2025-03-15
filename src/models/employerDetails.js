@@ -2,8 +2,8 @@ const { DataTypes } = require('sequelize');
 const { client } = require('../utils/db.js');
 const { User } = require('./user.js');
 
-const ContractorDetails = client.define(
-  "contractorDetails",
+const EmployerDetails = client.define(
+  "employerDetails",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -20,24 +20,21 @@ const ContractorDetails = client.define(
       },
       onDelete: "CASCADE",
     },
-    job_category: {
-      type: DataTypes.TEXT,
-    },
-    work_experience: {
+    company_name: {
       type: DataTypes.STRING,
     },
-    portfolio: {
+    company_type: {
       type: DataTypes.STRING,
     },
   },
   {
-    tableName: "contractor_details",
+    tableName: "employer_details",
     underscored: true,
   }
 );
 
-ContractorDetails.belongsTo(User, { foreignKey: "user_id" });
+EmployerDetails.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = {
-  ContractorDetails,
+  EmployerDetails,
 };

@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../models/user");
 const { ApiError } = require("../exceptions/api.error");
 const { ContractorDetails } = require("../models/contractorDetails");
+const { EmployerDetails } = require("../models/employerDetails")
 const tokenServices = require("../services/tokenService");
 const userServices = require("../services/userService");
 const emailServices = require("../services/emailService");
@@ -41,7 +42,7 @@ const generateTokens = async (res, user) => {
 
 const register = async (req, res) => {
   try {
-    const { first_name, last_name, email, password: pass, role, skills, experience, portfolio, } = req.body;
+    const { first_name, last_name, email, password: pass, role, country, city, phone_number, job_category, work_experience, portfolio, company_name, company_type } = req.body;
 
     if (!first_name && !last_name && !email && pass && role) {
       throw ApiError.badRequest("Not all data was transferred");
@@ -66,24 +67,35 @@ const register = async (req, res) => {
       password: password,
       role,
       activation_token,
+      country,
+      city,
+      phone_number,
     });
-
-
 
     await emailServices.sendActivationEmail(email, activation_token);
 
     if (role === "job_seeker") {
       const newContractor = {
         user_id: new_user.id,
-        skills,
-        experience,
+        job_category,
+        work_experience,
         portfolio,
       };
 
       await ContractorDetails.create(newContractor);
     }
 
-    res.send(new_user);
+    if (role === "employer") {
+      const newEmployer = {
+        user_id: new_user.id,
+        company_name,
+        company_type,
+      }
+
+      await EmployerDetails.create(newEmployer);
+    }
+
+    res.send(userServices.normalize(new_user));
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -142,16 +154,28 @@ const login = async (req, res) => {
       throw ApiError.unauthorized("Unauthorized");
     }
 
-
-    if (user.role === "contractor") {
-      const detail = await userServices.findByIdDetail(+user.id);
+    if (user.role === "job_seeker") {
+      const detail = await userServices.findByIdDetail(+user.id, user.role);
 
       tokens = {
         user: {
           ...tokens.user,
-          skills: detail.skills,
-          experience: detail.experience,
+          job_category: detail.job_category,
+          work_experience: detail.work_experience,
           portfolio: detail.portfolio,
+        },
+        access_token: tokens.access_token,
+      };
+    }
+
+    if (user.role === "employer") {
+      const detail = await userServices.findByIdDetail(+user.id, user.role);
+
+      tokens = {
+        user: {
+          ...tokens.user,
+          company_name: detail.company_name,
+          company_type: detail.company_type,
         },
         access_token: tokens.access_token,
       };

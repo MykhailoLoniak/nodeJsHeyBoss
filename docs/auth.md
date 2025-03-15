@@ -1,54 +1,172 @@
-Документація API: Маршрути аутентифікації (authRoutes)
-## Загальний опис
-**authRoutes** обробляє всі запити, пов'язані з аутентифікацією та управлінням користувачами.
-**Базовий URL:** `/api/auth`
-## Список маршрутів
-### Реєстрація користувача
-**POST /register**
-**Опис:** Реєструє нового користувача та відправляє email для активації.
-**Тіло запиту (JSON):**
-{  "firstName": "John",  "lastName": "Doe",  "email": "johndoe@example.com",  "password": "securepassword",  "role": "contractor",  "skills": "JavaScript, React",  "experience": "5 years",  "portfolio": "https://portfolio.example.com"}
-**Відповідь (200 OK):**
-{  "id": 1,  "firstName": "John",  "lastName": "Doe",  "email": "johndoe@example.com",  "role": "contractor"}
-### Активація акаунта
-**GET /activation/:token**
-**Опис:** Активує акаунт користувача після реєстрації.
-**Параметри URL:**token (string) – токен активації, отриманий через email.
-**Відповідь (200 OK):**
-{  "id": 1,  "firstName": "John",  "lastName": "Doe",  "email": "johndoe@example.com",  "role": "contractor"}
-### Вхід у систему
-**POST /login**
-**Опис:** Авторизує користувача та повертає токени доступу.
-**Тіло запиту (JSON):**
-{  "email": "johndoe@example.com",  "password": "securepassword"}
-**Відповідь (200 OK):**
-{  "user": {    "id": 1,    "firstName": "John",    "lastName": "Doe",    "email": "johndoe@example.com",    "role": "contractor"  },  "accessToken": "jwt_access_token"}
-### Вихід із системи
-**DELETE /logout**
-**Опис:** Видаляє refresh-токен із бази та виходить з акаунта.
-**Відповідь (200 OK):**
-(204 No Content)
-### Оновлення токена
-**GET /refresh**
-**Опис:** Оновлює accessToken, використовуючи refreshToken.
-**Відповідь (200 OK):**
-{  "user": {    "id": 1,    "firstName": "John",    "lastName": "Doe",    "email": "johndoe@example.com"  },  "accessToken": "new_jwt_access_token"}
-### Запит на скидання пароля
-**POST /request-password-reset**
-**Опис:** Надсилає користувачеві email із посиланням для скидання пароля.
-**Тіло запиту (JSON):**
-{  "email": "johndoe@example.com"}
-**Відповідь (200 OK):**
-{  "message": "Password reset link has been sent to your email"}
-### Скидання пароля
-**PUT /password-reset/:token**
-**Опис:** Встановлює новий пароль користувача.
-**Параметри URL:**token (string) – токен для скидання пароля, отриманий через email.
-**Тіло запиту (JSON):**
-{  "password": "newpassword123",  "confirmation": "newpassword123"}
-**Відповідь (200 OK):**
-{  "message": "Password has been reset successfully"}
-## Примітки
-**accessToken** потрібно передавати в заголовку `Authorization: Bearer {token}` для всіх захищених маршрутів.
-**refreshToken** зберігається в HttpOnly cookie.
-Для обмеження спроб входу використовується `express-rate-limit` (10 спроб за 15 хвилин).
+# Документація до маршруту /api/auth
+
+## Опис
+
+Цей маршрут відповідає за аутентифікацію користувачів, включаючи реєстрацію, вхід, активацію акаунта, вихід, оновлення токена та скидання пароля.
+
+## Ендпоїнти
+
+### 1. Реєстрація користувача
+
+**POST /api/auth/register**
+
+#### Опис
+
+Реєструє нового користувача в системі.
+
+#### Обов'язкові поля:
+
+- `first_name` (string) – ім'я користувача
+- `last_name` (string) – прізвище користувача
+- `email` (string) – електронна пошта
+- `password` (string) – пароль користувача
+- `role` (string) – роль користувача (`job_seeker` або `employer`)
+
+#### Опціональні поля:
+
+- `country` (string) – країна проживання
+- `city` (string) – місто проживання
+- `phone_number` (string) – номер телефону
+- `job_category` (string) – категорія роботи (для `job_seeker`)
+- `work_experience` (string) – досвід роботи (для `job_seeker`)
+- `portfolio` (string) – портфоліо (для `job_seeker`)
+- `company_name` (string) – назва компанії (для `employer`)
+- `company_type` (string) – тип компанії (для `employer`)
+
+#### Відповідь (200 OK):
+
+```json
+{
+  "user": {
+    "id": 1,
+    "first_name": "Іван",
+    "last_name": "Петров",
+    "email": "ivan@example.com",
+    "role": "job_seeker"
+  }
+}
+```
+
+### 2. Активація акаунта
+
+**GET /api/auth/activation/:token**
+
+#### Опис
+
+Активація облікового запису за унікальним токеном.
+
+#### Вхідні параметри:
+
+- `token` (string) – токен активації, отриманий на email
+
+#### Відповідь (200 OK):
+
+```json
+{
+  "user": {
+    "id": 1,
+    "first_name": "Іван",
+    "last_name": "Петров",
+    "email": "ivan@example.com",
+    "role": "job_seeker"
+  }
+}
+```
+
+### 3. Вхід у систему
+
+**POST /api/auth/login**
+
+#### Опис
+
+Авторизує користувача в системі.
+
+#### Вхідні параметри:
+
+- `email` (string) – електронна пошта
+- `password` (string) – пароль
+
+#### Відповідь (200 OK):
+
+```json
+{
+  "user": {
+    "id": 1,
+    "first_name": "Іван",
+    "last_name": "Петров",
+    "email": "ivan@example.com",
+    "role": "job_seeker"
+  },
+  "access_token": "jwt_token"
+}
+```
+
+### 4. Вихід із системи
+
+**DELETE /api/auth/logout**
+
+#### Опис
+
+Видаляє refresh-токен користувача та завершує сесію.
+
+#### Відповідь (204 No Content)
+
+### 5. Оновлення токена
+
+**GET /api/auth/refresh**
+
+#### Опис
+
+Оновлює access-токен за допомогою refresh-токена.
+
+#### Відповідь (200 OK):
+
+```json
+{
+  "user": {
+    "id": 1,
+    "first_name": "Іван",
+    "last_name": "Петров",
+    "email": "ivan@example.com",
+    "role": "job_seeker"
+  },
+  "access_token": "new_jwt_token"
+}
+```
+
+### 6. Запит на скидання пароля
+
+**POST /api/auth/request-password-reset**
+
+#### Опис
+
+Надсилає користувачеві email із посиланням для скидання пароля.
+
+#### Вхідні параметри:
+
+- `email` (string) – електронна пошта користувача
+
+#### Відповідь (200 OK):
+
+```json
+{ "message": "Password reset link has been sent to your email" }
+```
+
+### 7. Скидання пароля
+
+**PUT /api/auth/password-reset/:token**
+
+#### Опис
+
+Оновлює пароль користувача.
+
+#### Вхідні параметри:
+
+- `token` (string) – токен скидання пароля
+- `password` (string) – новий пароль
+
+#### Відповідь (200 OK):
+
+```json
+{ "message": "Password has been reset successfully" }
+```
