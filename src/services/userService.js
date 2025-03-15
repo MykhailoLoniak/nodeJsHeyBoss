@@ -1,6 +1,7 @@
 const { Token } = require("../models/token.js");
 const { User } = require("../models/user.js");
 const { ContractorDetails } = require("../models/contractorDetails.js");
+const { EmployerDetails } = require("../models/employerDetails")
 const { ApiError } = require("../exceptions/api.error.js");
 
 
@@ -20,9 +21,14 @@ const getUserToken = async (user_id) => {
   return Token.findOne({ where: { user_id } });
 };
 
-const findByIdDetail = async (user_id) => {
-  return await ContractorDetails.findOne({ where: { user_id } });
+const findByIdDetail = async (user_id, role) => {
+  if (role === "job_seeker") {
+    return await ContractorDetails.findOne({ where: { user_id } });
+  }
+
+  return await EmployerDetails.findOne({ where: { user_id } });
 };
+
 
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
