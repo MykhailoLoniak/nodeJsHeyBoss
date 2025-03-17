@@ -19,5 +19,6 @@ router.delete("/logout", catchError(authController.logout));
 router.get("/refresh", catchError(authController.refresh));
 router.post("/request-password-reset", loginLimiter, catchError(authController.requestPasswordReset));
 router.put("/password-reset/:token", catchError(authController.passwordReset));
+router.post("/google-o-auth", catchError(authController.GoogleOAuth))
 
 module.exports = router;

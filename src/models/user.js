@@ -45,7 +45,6 @@ const User = client.define(
     password_reset_token: {
       type: DataTypes.STRING,
     },
-
   },
   {
     tableName: "users",
