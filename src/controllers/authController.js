@@ -44,7 +44,22 @@ const generateTokens = async (res, user) => {
 
 const register = async (req, res) => {
   try {
-    const { first_name, last_name, email, password: pass, role, country, city, phone_number, job_category, work_experience, portfolio, company_name, company_type } = req.body;
+    const {
+      first_name,
+      last_name,
+      email,
+      password: pass,
+      role,
+      country,
+      city,
+      phone_number,
+      job_category,
+      work_experience,
+      portfolio,
+      company_name,
+      company_type,
+      company_location
+    } = req.body;
 
     if (!first_name && !last_name && !email && pass && role) {
       throw ApiError.badRequest("Not all data was transferred");
@@ -90,6 +105,7 @@ const register = async (req, res) => {
     if (role === "employer") {
       const newEmployer = {
         user_id: new_user.id,
+        company_location,
         company_name,
         company_type,
       }
@@ -173,12 +189,10 @@ const login = async (req, res) => {
     if (user.role === "employer") {
       const detail = await userServices.findByIdDetail(+user.id, user.role);
 
-      console.log('token____________________:', tokens);
-
-
       tokens = {
         user: {
           ...tokens.user,
+          company_location: detail.company_location,
           company_name: detail.company_name,
           company_type: detail.company_type,
         },
