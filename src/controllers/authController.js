@@ -2,15 +2,14 @@ const { v4: uuid } = require("uuid");
 const bcrypt = require("bcryptjs");
 const { OAuth2Client } = require('google-auth-library');
 
-const { User } = require("../models/user");
 const { ApiError } = require("../exceptions/api.error");
+const { User } = require("../models/user");
 const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails")
 const tokenServices = require("../services/tokenService");
 const userServices = require("../services/userService");
 const emailServices = require("../services/emailService");
 const { jwtService } = require("../services/jwtService");
-const client = new OAuth2Client("621257397063-l7j8d01rlmjdt4odg9tt7vpftmffhgc4.apps.googleusercontent.com");
 
 const generateTokens = async (res, user) => {
   try {
@@ -20,14 +19,15 @@ const generateTokens = async (res, user) => {
 
     await tokenServices.save(user.id, refreshAccessToken);
 
-    console.log("tokenServices", tokenServices);
 
-    res.cookie("refresh_token", refreshAccessToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      HttpOnly: true,
-      secure: process.env.NODE_ENV === "production", // використовується тільки по HTTPS у продакшені
-      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
-    });
+    if (res) {
+      res.cookie("refresh_token", refreshAccessToken, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        HttpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+      });
+    }
 
     const send = {
       user: normalizeUser,
@@ -309,72 +309,8 @@ const passwordReset = async (req, res) => {
   res.send("Password has been reset successfully");
 };
 
-const GoogleOAuth = async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: "621257397063-2i735m09hhehr4ilf4stk0el72ona13p.apps.googleusercontent.com",
-    });
-
-    const payload = ticket.getPayload();
-    const { email, name, picture } = payload;
-
-    console.log("Google user:", { email, name, picture });
-
-    // Перевіряємо, чи є такий юзер у базі
-    let user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      throw ApiError.badRequest("No such user");
-    }
-
-    if (user.activation_token) {
-      throw ApiError.forbidden("Confirm your email");
-    }
-
-    let tokens = await generateTokens(res, user);
-
-    if (!tokens) {
-      throw ApiError.unauthorized("Unauthorized");
-    }
-
-    if (user.role === "job_seeker") {
-      const detail = await userServices.findByIdDetail(+user.id, user.role);
-
-      tokens = {
-        user: {
-          ...tokens.user,
-          job_category: detail.job_category,
-          work_experience: detail.work_experience,
-          portfolio: detail.portfolio,
-        },
-        access_token: tokens.access_token,
-      };
-    }
-
-    if (user.role === "employer") {
-      const detail = await userServices.findByIdDetail(+user.id, user.role);
-
-      tokens = {
-        user: {
-          ...tokens.user,
-          company_name: detail.company_name,
-          company_type: detail.company_type,
-        },
-        access_token: tokens.access_token,
-      };
-    }
-
-    return res.status(200).json(tokens);
-  } catch (error) {
-    console.error("Google OAuth error:", error);
-    return res.status(401).json({ error: "Invalid Google token" });
-  }
-};
-
 const authController = {
+  generateTokens,
   register,
   activate,
   login,
@@ -382,7 +318,6 @@ const authController = {
   logout,
   requestPasswordReset,
   passwordReset,
-  GoogleOAuth
 }
 
 module.exports = authController

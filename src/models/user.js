@@ -33,6 +33,9 @@ const User = client.define(
     country: {
       type: DataTypes.STRING,
     },
+    git_hub: {
+      type: DataTypes.STRING,
+    },
     city: {
       type: DataTypes.STRING,
     },

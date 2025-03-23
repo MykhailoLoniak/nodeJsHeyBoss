@@ -12,12 +12,12 @@ async function save(userId, newToken) {
   console.log("Користувач існує");
 
   try {
-    const existingToken = await Token.findOne({ where: { userId } });
+    const existingToken = await Token.findOne({ where: { user_id: userId } });
 
     if (!existingToken) {
       const createdToken = await Token.create({
-        userId: userId,
-        refreshToken: newToken,
+        user_id: userId,
+        refresh_token: newToken,
       });
       console.log("Токен створено", createdToken);
     } else {

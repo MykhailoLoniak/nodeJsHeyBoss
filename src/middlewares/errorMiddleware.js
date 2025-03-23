@@ -6,6 +6,8 @@ const errorMiddleware = (error, req, res, next) => {
       message: error.message,
       errors: error.errors,
     });
+
+    return;
   }
 
   if (error) {
@@ -15,6 +17,8 @@ const errorMiddleware = (error, req, res, next) => {
       message: "Server error",
       error,
     });
+
+    return;
   }
 
   next();

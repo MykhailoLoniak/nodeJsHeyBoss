@@ -1,12 +1,12 @@
 require('dotenv').config()
 const express = require("express");
+const session = require("express-session");
 const http = require("http");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/authRoutes");
-const clientRoutes = require("./routes/clientRouter");
 const chatRouters = require("./routes/chatRoutes");
 const { authMiddleware } = require("./middlewares/authMiddleware");
 const { errorMiddleware } = require("./middlewares/errorMiddleware");
@@ -21,6 +21,11 @@ const corsOptions = {
   credentials: true,
 };
 
+app.use(session({
+  secret: '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',  // заміни на безпечний секрет
+  resave: false,
+  saveUninitialized: true,
+}));
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -30,7 +35,7 @@ app.use(cookieParser());
 setupWebSocketServer(server);
 
 app.use("/api/auth", authRoutes);
-app.use("/api/client", authMiddleware, clientRoutes);
+// app.use("/api/profile", profle)
 app.use("/chats", authMiddleware, chatRouters);
 
 app.get("/api/contractor", authMiddleware, (req, res) => {
