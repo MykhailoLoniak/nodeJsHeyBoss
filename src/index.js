@@ -21,8 +21,8 @@ console.log('-------------------------------------------', process.env.CLIENT_OR
 
 const corsOptions = {
   origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type,Authorization",
+  // methods: "GET,POST,PUT,DELETE",
+  // allowedHeaders: "Content-Type,Authorization",
   credentials: true,
 };
 
