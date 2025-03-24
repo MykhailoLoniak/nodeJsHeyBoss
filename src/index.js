@@ -17,7 +17,7 @@ const server = http.createServer(app);
 const PORT = process.env.PORT || 3005;
 
 const corsOptions = {
-  origin: process.env.CLIENT_ORIGIN,
+  origin: '*',
   credentials: true,
 };
 

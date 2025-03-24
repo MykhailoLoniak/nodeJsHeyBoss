@@ -30,7 +30,7 @@ async function save(userId, newToken) {
   }
 }
 
-function getByToken(refreshToken) {
+function getByToken(refresh_token) {
   return Token.findOne({ where: { refresh_token } });
 }
 
