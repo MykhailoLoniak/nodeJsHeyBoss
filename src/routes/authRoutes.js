@@ -12,6 +12,9 @@ const router = Router();
 
 const getToken = async (req, res) => {
   try {
+console.log("---------------------------------------------------------------", req.user);
+
+
     const user = req.user;
     let tokens = await authController.generateTokens(res, req.user);
     if (!tokens) {
@@ -28,7 +31,7 @@ const getToken = async (req, res) => {
 
 const saveNewUser = (req, res) => {
   const email = req.user.email;
-  const profile_picture = req.user.profile_picture || "default_profile_picture_url";
+  // const profile_picture = req.user.profile_picture || "default_profile_picture_url";
   const redirectUrl = `${process.env.CLIENT_ORIGIN}/register?email=${email}`;
 
   return res.redirect(redirectUrl);
