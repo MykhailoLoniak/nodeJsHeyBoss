@@ -5,9 +5,6 @@ const { User } = require("../models/user");
 const userServices = require("../services/userService");
 const { ApiError } = require("../exceptions/api.error");
 
-
-
-
 passport.use(
   new GoogleStrategy(
     {
@@ -19,8 +16,14 @@ passport.use(
       try {
         const user = await userServices.findByEmail(profile.emails[0].value);
 
+
         if (!user) {
-          throw ApiError.badRequest("No such user");
+          const user = {
+            email: profile.emails[0].value,
+            profile_picture: profile.photos ? profile.photos[0].value : null
+          }
+
+          return done(null, user);
         }
 
         if (user.activation_token) {

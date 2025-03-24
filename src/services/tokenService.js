@@ -21,7 +21,7 @@ async function save(userId, newToken) {
       });
       console.log("Токен створено", createdToken);
     } else {
-      existingToken.refreshToken = newToken;
+      existingToken.refresh_token = newToken;
       await existingToken.save();
       console.log("Токен оновлено", existingToken);
     }
@@ -31,7 +31,7 @@ async function save(userId, newToken) {
 }
 
 function getByToken(refreshToken) {
-  return Token.findOne({ where: { refreshToken } });
+  return Token.findOne({ where: { refresh_token } });
 }
 
 async function remove(userId) {
