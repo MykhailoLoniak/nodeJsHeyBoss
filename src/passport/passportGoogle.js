@@ -10,19 +10,18 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3005/api/auth/google/callback",
+      callbackURL: `${process.env.BACKEND_ORIGIN}/api/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const user = await userServices.findByEmail(profile.emails[0].value);
-
-
+        
         if (!user) {
           const user = {
             email: profile.emails[0].value,
             profile_picture: profile.photos ? profile.photos[0].value : null
           }
-
+          
           return done(null, user);
         }
 

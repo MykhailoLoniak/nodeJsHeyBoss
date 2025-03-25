@@ -143,8 +143,13 @@ const activate = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  console.log('req____________________________:', req.body);
   try {
     const { email, password } = req.body;
+
+    console.log('email____________________________:', email);
+    console.log('password____________________________:', password);
+
 
     if (!password || !email) {
       throw ApiError.badRequest("Incorrect data");

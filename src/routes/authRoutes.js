@@ -12,8 +12,7 @@ const router = Router();
 
 const getToken = async (req, res) => {
   try {
-console.log("---------------------------------------------------------------", req.user);
-
+    // console.log("---------------------------------------------------------------", req.user);
 
     const user = req.user;
     let tokens = await authController.generateTokens(res, req.user);
