@@ -26,6 +26,15 @@ const EmployerDetails = client.define(
     company_type: {
       type: DataTypes.STRING,
     },
+    contact_info: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    team_size: {
+      type: DataTypes.STRING,
+    },
+    clients: {
+      type: DataTypes.STRING,
+    },
   },
   {
     tableName: "employer_details",

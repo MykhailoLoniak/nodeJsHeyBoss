@@ -7,19 +7,18 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 const chatRouters = require("./routes/chatRoutes");
 const { authMiddleware } = require("./middlewares/authMiddleware");
 const { errorMiddleware } = require("./middlewares/errorMiddleware");
 const { setupWebSocketServer } = require("./websocket/websocketServer");
-
+const profileCompanyRoutes = require("./routes/profileCompanyRoutes");
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3005;
 
 const corsOptions = {
   origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
-  // methods: "GET,POST,PUT,DELETE",
-  // allowedHeaders: "Content-Type,Authorization",
   credentials: true,
 };
 
@@ -37,12 +36,9 @@ app.use(cookieParser());
 setupWebSocketServer(server);
 
 app.use("/api/auth", authRoutes);
-// app.use("/api/profile", profle)
+app.use("/api/profile", profileRoutes);
+app.use("/api/profile-company", profileCompanyRoutes);
 app.use("/chats", authMiddleware, chatRouters);
-
-app.get("/api/contractor", authMiddleware, (req, res) => {
-  res.json({ message: "Welcome, Contractor!" });
-});
 
 app.use(errorMiddleware);
 

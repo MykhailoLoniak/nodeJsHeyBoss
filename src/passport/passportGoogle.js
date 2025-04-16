@@ -1,9 +1,10 @@
 require("dotenv").config();
 const passport = require("passport");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
-const { User } = require("../models/user");
+
 const userServices = require("../services/userService");
 const { ApiError } = require("../exceptions/api.error");
+const { User } = require("../models/user");
 
 passport.use(
   new GoogleStrategy(
@@ -15,13 +16,13 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         const user = await userServices.findByEmail(profile.emails[0].value);
-        
+
         if (!user) {
           const user = {
             email: profile.emails[0].value,
             profile_picture: profile.photos ? profile.photos[0].value : null
           }
-          
+
           return done(null, user);
         }
 

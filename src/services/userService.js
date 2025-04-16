@@ -22,11 +22,24 @@ const getUserToken = async (user_id) => {
 };
 
 const findByIdDetail = async (user_id, role) => {
+  console.log("Employer details not found for user role_________________:", role);
   if (role === "job_seeker") {
-    return await ContractorDetails.findOne({ where: { user_id } });
+    const detail = await ContractorDetails.findOne({ where: { user_id } });
+
+    if (!detail) {
+      throw ApiError.badRequest("No job seeker details found");
+    }
+
+    return detail
   }
 
-  return await EmployerDetails.findOne({ where: { user_id } });
+  const detail = await EmployerDetails.findOne({ where: { user_id } });
+
+
+  if (!detail) {
+    throw ApiError.badRequest("No employer details found");
+  }
+  return detail
 };
 
 

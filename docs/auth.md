@@ -32,6 +32,8 @@
 - `portfolio` (string) – портфоліо (для `job_seeker`)
 - `company_name` (string) – назва компанії (для `employer`)
 - `company_type` (string) – тип компанії (для `employer`)
+- `company_location` (string) – локація компанії (для `employer`)
+
 
 #### Відповідь (200 OK):
 

@@ -10,31 +10,13 @@ const { ApiError } = require("../exceptions/api.error.js");
 
 const router = Router();
 
-const getToken = async (req, res) => {
-  try {
-    // console.log("---------------------------------------------------------------", req.user);
-
-    const user = req.user;
-    let tokens = await authController.generateTokens(res, req.user);
-    if (!tokens) {
-      throw new ApiError(401, "Unauthorized");
-    }
-
-    const redirectUrl = `${process.env.CLIENT_ORIGIN}/auth?firstName=${encodeURIComponent(user.first_name)}&lastName=${encodeURIComponent(user.last_name)}&accessToken=${encodeURIComponent(tokens.accessToken)}`;
-
-    return res.redirect(redirectUrl);
-  } catch (error) {
-    throw new ApiError(500, "Token generation failed");
+const oauthCallbackHandler = async (req, res) => {
+  if (Object.keys(req.user).length === 2) {
+    return authController.saveNewUser(req, res);
   }
+
+  return authController.getToken(req, res);
 };
-
-const saveNewUser = (req, res) => {
-  const email = req.user.email;
-  // const profile_picture = req.user.profile_picture || "default_profile_picture_url";
-  const redirectUrl = `${process.env.CLIENT_ORIGIN}/register?email=${email}`;
-
-  return res.redirect(redirectUrl);
-}
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 хвилин
@@ -54,27 +36,12 @@ router.get("/github", passportGithub.authenticate("github", { scope: ["user:emai
 
 router.get('/google/callback',
   passportGoogle.authenticate('google', { failureRedirect: '/' }),
-  async (req, res) => {
-    if (Object.keys(req.user).length === 2) {
-      saveNewUser(req, res)
-      return;
-    }
-
-    return getToken(req, res)
-  }
+  oauthCallbackHandler
 );
 
-router.get(
-  "/github/callback",
-  passportGithub.authenticate("github", { failureRedirect: "/" }),
-  async (req, res) => {
-    if (Object.keys(req.user).length === 2) {
-      saveNewUser(req, res)
-      return;
-    }
-
-    return getToken(req, res)
-  }
+router.get('/github/callback',
+  passportGithub.authenticate('github', { failureRedirect: '/' }),
+  oauthCallbackHandler
 );
 
 module.exports = router;

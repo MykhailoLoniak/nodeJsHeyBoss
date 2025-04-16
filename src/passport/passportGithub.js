@@ -1,10 +1,11 @@
 require("dotenv").config();
+const fetch = require("node-fetch");
 const passport = require("passport");
 const { Strategy: GitHubStrategy } = require("passport-github2");
-const fetch = require("node-fetch");
-const { User } = require("../models/user");
+
 const userServices = require("../services/userService");
 const { ApiError } = require("../exceptions/api.error");
+const { User } = require("../models/user");
 
 async function getGitHubEmail(accessToken) {
   try {
