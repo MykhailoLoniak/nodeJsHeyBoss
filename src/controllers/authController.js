@@ -194,9 +194,7 @@ const logout = async (req, res) => {
 
   const userData = await jwtService.verifyRefresh(refresh_token);
 
-  if (!userData || !refresh_token) {
-    throw ApiError.unauthorized();
-  }
+c
 
   await tokenServices.remove(userData.id);
 

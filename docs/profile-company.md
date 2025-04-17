@@ -1,4 +1,4 @@
-# Документація до маршруту `/api/profile-company`
+# Документація до маршруту `/api/auth/profile-company`
 
 ## Опис
 
@@ -10,7 +10,7 @@
 
 ### 1. Отримання профілю компанії
 
-**GET /api/profile-company/:id**
+**GET /api/auth/profile-company/:id**
 
 #### Опис
 
@@ -40,7 +40,7 @@
 
 ### 2. Оновлення профілю компанії
 
-**PUT /api/profile-company/:id**
+**PUT /api/auth/profile-company/:id**
 
 #### Опис
 
@@ -68,7 +68,7 @@
 
 ### 3. Отримання вакансій компанії
 
-**GET /api/profile-company/get-jobs/:id**
+**GET /api/auth/profile-company/get-jobs/:id**
 
 #### Опис
 
@@ -105,7 +105,7 @@
 
 ### 4. Створення нової вакансії
 
-**POST /api/profile-company/newJob**
+**POST /api/auth/profile-company/newJob**
 
 #### Опис
 
@@ -135,7 +135,7 @@
 
 ### 5. Оновлення вакансії
 
-**PUT /api/profile-company/update-job/:id**
+**PUT /api/auth/profile-company/update-job/:id**
 
 #### Опис
 
@@ -169,7 +169,7 @@
 
 ### 6. Фільтрація вакансій
 
-**GET /api/profile-company/filter-jobs**
+**GET /api/auth/profile-company/filter-jobs**
 
 #### Опис
 
@@ -207,7 +207,7 @@
       "clients": "Google, Amazon"
     },
     ...
-  ] 
+  ]
 }
 ```
 
@@ -215,7 +215,7 @@
 
 ### 7. Видалення вакансії
 
-**DELETE /api/profile-company/delete-job/:id**
+**DELETE /api/auth/profile-company/delete-job/:id**
 
 #### Опис
 
@@ -235,7 +235,7 @@
 
 ### 8. Оновлення статусу вакансії
 
-**PUT /api/profile-company/job/:id/status**
+**PUT /api/auth/profile-company/job/:id/status**
 
 #### Опис
 

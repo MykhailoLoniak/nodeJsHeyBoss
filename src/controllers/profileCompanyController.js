@@ -1,8 +1,11 @@
+const { Op } = require("sequelize");
+
 const { User } = require("../models/user");
 const { EmployerDetails } = require("../models/employerDetails");
 const userServices = require("../services/userService");
 const ApiError = require("../exceptions/api.error");
-const { Op } = require("sequelize");
+const { jwtService } = require("../services/jwtService");
+
 
 const getProfile = async (req, res) => {
   const { id } = req.params;
@@ -19,16 +22,40 @@ const getProfile = async (req, res) => {
 
   const detail = await userServices.findByIdDetail(+user.id, user.role);
 
-  return res.status(200).json({
-    ...user,
-    ...detail,
-  });
+  const data = {
+    user_id: user.id,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    role: user.role,
+    company_name: detail.company_name,
+    company_type: detail.company_type,
+    company_location: detail.company_location,
+    contact_info: detail.contact_info,
+    team_size: detail.team_size,
+    clients: detail.clients,
+  }
+
+  return res.status(200).json(data);
 };
 
 const putProfile = async (req, res) => {
   const { id } = req.params;
 
-  const user = await userServices.getUser(id);
+  const { refresh_token } = req.cookies;
+
+  const user = await jwtService.verifyRefresh(refresh_token);
+
+  if (!user || !refresh_token) {
+    throw ApiError.unauthorized();
+  }
+
+  if (user.id !== +id) {
+    throw ApiError.forbidden("You are not authorized to edit this profile");
+  }
+
+
+  // const user = await userServices.getUser(id);
 
   if (!user) {
     throw ApiError.badRequest("No such user");
@@ -102,11 +129,11 @@ const newJob = async (req, res) => {
     short_summary,
     full_description,
     application_deadline,
-    visibility : visibility || "public", 
-    status: status || "draft", 
+    visibility: visibility || "public",
+    status: status || "draft",
   });
 
-  return res.status(201).json(job);
+  return res.status(201).json(job.dataValues);
 }
 
 const updateJob = async (req, res) => {

@@ -14,10 +14,10 @@ const Jobs = client.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: User,
-        key: "id",
+        model: 'users', // 🔧 Ім’я таблиці, а не модель
+        key: 'id',
       },
-      onDelete: "CASCADE",
+      onDelete: 'CASCADE',
     },
     job_title: {
       type: DataTypes.STRING,

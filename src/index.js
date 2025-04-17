@@ -37,7 +37,7 @@ setupWebSocketServer(server);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/profile-company", profileCompanyRoutes);
+app.use("/api/auth/profile-company", profileCompanyRoutes);
 app.use("/chats", authMiddleware, chatRouters);
 
 app.use(errorMiddleware);

@@ -1,45 +1,44 @@
-const { Sequelize } = require("sequelize");
-const { User } = require("./src/models/user");
-const { ChatRoom } = require("./src/models/chatRoom");
-const { ContractorDetails } = require("./src/models/contractorDetails");
-const { Token } = require("./src/models/token");
-const { UserChatRoom } = require("./src/models/userChatRoom");
+require('dotenv/config');
+const {
+  client,
+  User,
+  Jobs,
+  Token,
+  ChatRoom,
+  UserChatRoom,
+  EmployerReview,
+  EmployerDetails,
+  ContractorDetails,
+} = require('./src/models');
 
-// Підключення до бази даних
-const client = new Sequelize(
-  "postgresql://misha:fZVyiAfECbis62yQNdCXE1ZI8GaP5LUv@dpg-cv7i7ihc1ekc738pe990-a.oregon-postgres.render.com/localhost_1u8k",
-  {
-    dialect: "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
-  }
-);
+console.log('📦 Початок ініціалізації моделей...');
 
-// Функція для синхронізації моделей
-async function syncDatabase() {
-  try {
-    console.log("Синхронізація таблиць...");
+console.log('✅ Всі моделі були успішно імпортовані!');
+console.log('🧪 Перевірка з’єднання з базою даних...');
 
-    // Переконайтеся, що підключення працює
-    await client.authenticate();
-    console.log("Підключення до бази успішне!");
+client.authenticate()
+  .then(() => {
+    console.log('✅ З’єднання з базою даних успішне!');
+    console.log('🔄 Спроба синхронізації моделей з базою даних...');
+    return client.sync({ force: true, alter: true }); // використовуй тільки force або alter, не разом
+  })
+  .then(async () => {
+    console.log('✅ Всі таблиці були успішно створені!');
 
-    // Видаляє і створює таблиці заново
-    await client.sync({ force: true });
+    const [results] = await client.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public';
+    `);
 
-    console.log("Таблиці були успішно створені!");
+    console.log('\n📋 Таблиці у public:');
+    results.forEach((row) => {
+      console.log('🧾', row.table_name);
+    });
 
-  } catch (error) {
-    console.error("Помилка при синхронізації таблиць:", error);
-  } finally {
-    // Закриваємо підключення
-    await client.close();
-  }
-}
-
-// Викликаємо функцію
-syncDatabase();
+    process.exit();
+  })
+  .catch((err) => {
+    console.error('❌ Помилка при ініціалізації:', err);
+    process.exit(1);
+  });

@@ -26,6 +26,9 @@ const EmployerDetails = client.define(
     company_type: {
       type: DataTypes.STRING,
     },
+    company_location: {
+      type: DataTypes.STRING,
+    },
     contact_info: {
       type: DataTypes.ARRAY(DataTypes.STRING),
     },
