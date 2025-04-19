@@ -31,7 +31,8 @@
     "company_type": "IT",
     "contact_info": ["info@technova.com", "+380991234567"],
     "team_size": "11-50",
-    "clients": "Google, Microsoft"
+    "clients": "Google, Microsoft",
+    "description": "New company description"
   }
 }
 ```

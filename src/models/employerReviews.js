@@ -9,24 +9,24 @@ const EmployerReview = client.define('employer_reviews', {
     autoIncrement: true,
     primaryKey: true,
   },
-   employer_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users', // 🔧 Таблиця, не модель
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
+  employer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users', // 🔧 Таблиця, не модель
+      key: 'id',
     },
-    reviewer_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'users',
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
+    onDelete: 'CASCADE',
+  },
+  reviewer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
     },
+    onDelete: 'CASCADE',
+  },
   rating: {
     type: DataTypes.INTEGER, 
     allowNull: false,

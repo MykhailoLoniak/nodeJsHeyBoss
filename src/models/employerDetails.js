@@ -38,6 +38,9 @@ const EmployerDetails = client.define(
     clients: {
       type: DataTypes.STRING,
     },
+    description: {
+      type: DataTypes.STRING,
+    },
   },
   {
     tableName: "employer_details",
