@@ -5,6 +5,7 @@ const { EmployerDetails } = require("../models/employerDetails");
 const userServices = require("../services/userService");
 const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
+const { Jobs } = require("../models/jobs");
 
 
 const getProfile = async (req, res) => {
@@ -54,11 +55,7 @@ const putProfile = async (req, res) => {
     throw ApiError.forbidden("You are not authorized to edit this profile");
   }
 
-  if (!user) {
-    throw ApiError.badRequest("No such user");
-  }
-
-  if (user.role === "job_seeker") {
+  if (user.role !== "employer") {
     throw ApiError.forbidden("Confirm your email");
   }
 
@@ -66,7 +63,29 @@ const putProfile = async (req, res) => {
 
   let detail = await EmployerDetails.findOne({ where: { user_id: id } });
   if (!detail) {
-    throw ApiError.badRequest("No employer details found");
+    throw ApiError.forbidden("Only employers can edit profile");
+  }
+
+  if (company_name && typeof company_name !== 'string') {
+    throw ApiError.badRequest("Invalid company name");
+  }
+
+  if (company_type && typeof company_type !== 'string') {
+    throw ApiError.badRequest("Invalid company name");
+  }
+
+  if (team_size && typeof team_size !== 'string') {
+    throw ApiError.badRequest("Invalid company name");
+  }
+  if (description && typeof description !== 'string') {
+    throw ApiError.badRequest("Invalid company name");
+  }
+
+  if (contact_info && !Array.isArray(contact_info)) {
+    throw ApiError.badRequest("Invalid company name");
+  }
+  if (clients && !Array.isArray(clients)) {
+    throw ApiError.badRequest("Invalid company name");
   }
 
   await detail.update({
@@ -78,7 +97,24 @@ const putProfile = async (req, res) => {
     description
   });
 
-  return res.status(200).json({ message: "Profile updated" });
+  const updatedDetail = {
+    user_id: user.id,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    role: user.role,
+    company_name: detail.company_name,
+    company_type: detail.company_type,
+    contact_info: detail.contact_info,
+    team_size: detail.team_size,
+    clients: detail.clients,
+    description: detail.description,
+  }
+
+  return res.status(200).json({
+    message: "Profile updated" ,
+    data: updatedDetail,
+  });
 };
 
 const getJobs = async (req, res) => {

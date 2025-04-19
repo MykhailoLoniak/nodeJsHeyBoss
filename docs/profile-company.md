@@ -64,7 +64,22 @@
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Профіль оновлено успішно" }
+{
+  "message": "Профіль оновлено успішно",
+  "data": {
+    user_id,
+    email,
+    first_name,
+    last_name,
+    role,
+    company_name,
+    company_type,
+    contact_info,
+    team_size,
+    clients,
+    description,
+  }
+}
 ```
 
 ### 3. Отримання вакансій компанії
