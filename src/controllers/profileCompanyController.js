@@ -45,6 +45,9 @@ const putProfile = async (req, res) => {
 
   const { refresh_token } = req.cookies;
 
+  console.log("refresh_token...............................:", refresh_token);
+
+
   const user = await jwtService.verifyRefresh(refresh_token);
 
   if (!user || !refresh_token) {
