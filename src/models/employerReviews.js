@@ -13,7 +13,7 @@ const EmployerReview = client.define('employer_reviews', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'users', // 🔧 Таблиця, не модель
+      model: 'users', 
       key: 'id',
     },
     onDelete: 'CASCADE',

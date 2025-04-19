@@ -14,5 +14,7 @@ router.put("/update-job/:id", catchError(profileController.updateJob));
 router.get("/filter-jobs", catchError(profileController.filterJobs));
 router.delete("/delete-job/:id", catchError(profileController.deleteJob));
 router.put("/job/:id/status", catchError(profileController.updateJobStatus));
+router.get("/reviews/:id", catchError(profileController.getEmployerReviews));
+
 
 module.exports = router;

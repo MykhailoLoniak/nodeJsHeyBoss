@@ -74,6 +74,7 @@
     role,
     company_name,
     company_type,
+    company_location,
     contact_info,
     team_size,
     clients,

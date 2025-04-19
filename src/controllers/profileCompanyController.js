@@ -1,7 +1,8 @@
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 const { User } = require("../models/user");
 const { EmployerDetails } = require("../models/employerDetails");
+const { EmployerReviews } = require("../models/employerReviews");
 const userServices = require("../services/userService");
 const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
@@ -44,10 +45,6 @@ const putProfile = async (req, res) => {
   const { id } = req.params;
 
   const { refresh_token } = req.cookies;
-
-  console.log("refresh_token...............................:", refresh_token);
-  console.log("req.body...............................:", req.body);
-
 
   const user = await jwtService.verifyRefresh(refresh_token);
 
@@ -108,6 +105,7 @@ const putProfile = async (req, res) => {
     last_name: user.last_name,
     role: user.role,
     company_name: detail.company_name,
+    company_location: detail.company_location,
     company_type: detail.company_type,
     contact_info: detail.contact_info,
     team_size: detail.team_size,
@@ -305,6 +303,23 @@ const deleteJob = async (req, res) => {
   return res.status(200).json({ message: "Job deleted" });
 };
 
+const getEmployerReviews = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findAll({ where: { id } });
+
+  if (!user) {
+    throw ApiError.badRequest("No such user");
+  }
+
+  if (user.role === "employer") {
+    throw ApiError.forbidden("No employer reviews found");
+  }
+
+  const reviews = await EmployerReviews.findAll({ where: { employer_id: id } });
+
+  return res.status(200).json(reviews);
+}
 
 const profileController = {
   getProfile,
@@ -315,6 +330,7 @@ const profileController = {
   filterJobs,
   deleteJob,
   updateJobStatus,
+  getEmployerReviews,
 };
 
 module.exports = profileController

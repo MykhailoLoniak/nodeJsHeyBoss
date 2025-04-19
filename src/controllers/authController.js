@@ -24,6 +24,7 @@ const generateTokens = async (res, user) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
+
     });
   }
 
