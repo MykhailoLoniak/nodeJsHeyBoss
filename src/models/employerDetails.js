@@ -36,7 +36,7 @@ const EmployerDetails = client.define(
       type: DataTypes.STRING,
     },
     clients: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.STRING,
     },
     description: {
       type: DataTypes.STRING,

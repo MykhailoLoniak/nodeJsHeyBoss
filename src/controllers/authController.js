@@ -21,7 +21,7 @@ const generateTokens = async (res, user) => {
   if (res) {
     res.cookie("refresh_token", refreshAccessToken, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      HttpOnly: true,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
     });
@@ -193,7 +193,7 @@ const logout = async (req, res) => {
 
   const userData = await jwtService.verifyRefresh(refresh_token);
 
-c
+  c
 
   await tokenServices.remove(userData.id);
 
