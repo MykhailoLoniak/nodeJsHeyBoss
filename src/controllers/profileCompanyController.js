@@ -112,7 +112,7 @@ const putProfile = async (req, res) => {
   }
 
   return res.status(200).json({
-    message: "Profile updated" ,
+    message: "Profile updated",
     data: updatedDetail,
   });
 };
@@ -149,6 +149,11 @@ const newJob = async (req, res) => {
     visibility,
     status,
   } = req.body;
+
+  if (min_salary && max_salary && +min_salary > +max_salary) {
+    throw ApiError.badRequest("Min salary can't be more than max salary");
+  }
+
 
   const job = await Jobs.create({
     user_id,
@@ -188,6 +193,12 @@ const updateJob = async (req, res) => {
     throw ApiError.badRequest("No such job");
   }
 
+  const currentUser = await jwtService.verifyRefresh(req.cookies.refresh_token);
+
+  if (job.user_id !== currentUser.id) {
+    throw ApiError.forbidden("You are not allowed to update this job");
+  }
+
   await job.update({
     job_title,
     location,
@@ -214,7 +225,12 @@ const filterJobs = async (req, res) => {
     visibility,
   } = req.query;
 
+  if (min_salary && max_salary && +min_salary > +max_salary) {
+    throw ApiError.badRequest("Min salary cannot be greater than max salary");
+  }
+
   const where = {};
+
 
   if (min_salary) {
     where.min_salary = { [Op.gte]: +min_salary };
@@ -250,8 +266,15 @@ const updateJobStatus = async (req, res) => {
   const { status } = req.body; // статус може бути, наприклад, 'active', 'closed', 'draft'
 
   const job = await Jobs.findOne({ where: { id } });
+
   if (!job) {
     throw ApiError.badRequest("No such job");
+  }
+
+  const currentUser = await jwtService.verifyRefresh(req.cookies.refresh_token);
+
+  if (job.user_id !== currentUser.id) {
+    throw ApiError.forbidden("You are not allowed to delete this job");
   }
 
   await job.update({ status });
@@ -266,6 +289,11 @@ const deleteJob = async (req, res) => {
 
   if (!job) {
     throw ApiError.badRequest("No such job");
+  }
+
+  const currentUser = await jwtService.verifyRefresh(req.cookies.refresh_token);
+  if (job.user_id !== currentUser.id) {
+    throw ApiError.forbidden("You are not allowed to delete this job");
   }
 
   await job.destroy();
