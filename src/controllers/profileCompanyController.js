@@ -60,7 +60,7 @@ const putProfile = async (req, res) => {
     throw ApiError.forbidden("Confirm your email");
   }
 
-  const { company_name, company_type, contact_info, team_size, clients, description } = req.body;
+  const { company_name, company_type, contact_info, team_size, clients, description, company_location } = req.body;
 
   let detail = await EmployerDetails.findOne({ where: { user_id: id } });
   if (!detail) {
@@ -78,7 +78,12 @@ const putProfile = async (req, res) => {
   if (team_size && typeof team_size !== 'string') {
     throw ApiError.badRequest("Invalid company name");
   }
+
   if (description && typeof description !== 'string') {
+    throw ApiError.badRequest("Invalid company name");
+  }
+
+  if (company_location && typeof company_location !== 'string') {
     throw ApiError.badRequest("Invalid company name");
   }
 
@@ -95,7 +100,8 @@ const putProfile = async (req, res) => {
     contact_info,
     team_size,
     clients,
-    description
+    description,
+    company_location
   });
 
   const updatedDetail = {
