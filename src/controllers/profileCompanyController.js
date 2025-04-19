@@ -54,9 +54,6 @@ const putProfile = async (req, res) => {
     throw ApiError.forbidden("You are not authorized to edit this profile");
   }
 
-
-  // const user = await userServices.getUser(id);
-
   if (!user) {
     throw ApiError.badRequest("No such user");
   }
@@ -65,10 +62,7 @@ const putProfile = async (req, res) => {
     throw ApiError.forbidden("Confirm your email");
   }
 
-  const { company_name, company_type, contact_info, team_size, clients } = req.body;
-
-  console.log("req.body___________:", req.body);
-
+  const { company_name, company_type, contact_info, team_size, clients, description } = req.body;
 
   let detail = await EmployerDetails.findOne({ where: { user_id: id } });
   if (!detail) {
@@ -81,6 +75,7 @@ const putProfile = async (req, res) => {
     contact_info,
     team_size,
     clients,
+    description
   });
 
   return res.status(200).json({ message: "Profile updated" });
