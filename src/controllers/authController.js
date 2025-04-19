@@ -1,6 +1,5 @@
 const { v4: uuid } = require("uuid");
 const bcrypt = require("bcryptjs");
-const { OAuth2Client } = require('google-auth-library');
 
 const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails")

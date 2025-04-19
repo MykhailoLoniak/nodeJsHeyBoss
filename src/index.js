@@ -28,10 +28,10 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-app.use(express.json());
-app.use(bodyParser.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(express.json());
+app.use(bodyParser.json());
 
 setupWebSocketServer(server);
 
