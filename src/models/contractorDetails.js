@@ -29,6 +29,15 @@ const ContractorDetails = client.define(
     portfolio: {
       type: DataTypes.STRING,
     },
+    section_title: {
+      type: DataTypes.STRING,
+    },
+    description: {
+      type: DataTypes.STRING,
+    },
+    position: {
+      type: DataTypes.STRING,
+    },
   },
   {
     tableName: "contractor_details",

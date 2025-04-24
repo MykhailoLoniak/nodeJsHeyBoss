@@ -57,6 +57,23 @@ function validatePassword(password) {
   }
 }
 
+const mergeUserData = (user, detail) => {
+  return {
+    user_id: user.id,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    role: user.role,
+    company_name: detail.company_name,
+    company_type: detail.company_type,
+    company_location: detail.company_location,
+    contact_info: detail.contact_info,
+    description: detail.description,
+    team_size: detail.team_size,
+    clients: detail.clients,
+  }
+}
+
 const userService = {
   normalize,
   findByEmail,
@@ -65,6 +82,7 @@ const userService = {
   findByIdDetail,
   validateEmail,
   validatePassword,
+  mergeUserData,
 }
 
 module.exports = userService;

@@ -41,6 +41,9 @@ const EmployerDetails = client.define(
     description: {
       type: DataTypes.STRING,
     },
+    avatar: {
+      type: DataTypes.STRING,
+    },
   },
   {
     tableName: "employer_details",
