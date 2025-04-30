@@ -6,18 +6,8 @@ const profileController = require("../controllers/profileCompanyController");
 
 const router = Router();
 
+router.get("/", catchError(profileController.getAllProfile));
 router.get("/:id", catchError(profileController.getProfile));
 router.put("/:id", catchError(profileController.putProfile));
-
-router.get("/get-jobs/:id", catchError(profileController.getJobs));
-router.post("/newJob", catchError(profileController.newJob));
-
-router.put("/update-job/:id", catchError(profileController.updateJob));
-router.get("/filter-jobs", catchError(profileController.filterJobs));
-router.delete("/delete-job/:id", catchError(profileController.deleteJob));
-router.put("/status-job/:id", catchError(profileController.updateJobStatus));
-
-router.get("/reviews/:id", catchError(profileController.getEmployerReviews));
-router.post("/reviews/", catchError(profileController.newEmployerReviews));
 
 module.exports = router;

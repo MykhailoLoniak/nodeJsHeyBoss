@@ -10,11 +10,11 @@ const Jobs = client.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    user_id: {
+    company_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'users', 
+        model: 'users',
         key: 'id',
       },
       onDelete: 'CASCADE',
@@ -56,7 +56,7 @@ const Jobs = client.define(
   }
 );
 
-Jobs.belongsTo(User, { foreignKey: "user_id" });
+Jobs.belongsTo(User, { foreignKey: "company_id" });
 
 module.exports = {
   Jobs,

@@ -21,7 +21,7 @@ const ContractorDetails = client.define(
       onDelete: "CASCADE",
     },
     job_category: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
     },
     work_experience: {
       type: DataTypes.STRING,
@@ -35,10 +35,10 @@ const ContractorDetails = client.define(
     description: {
       type: DataTypes.STRING,
     },
-    // position: {
-    //   type: DataTypes.STRING,
-    // },
     avatar: {
+      type: DataTypes.STRING,
+    },
+    location: {
       type: DataTypes.STRING,
     },
     country: {

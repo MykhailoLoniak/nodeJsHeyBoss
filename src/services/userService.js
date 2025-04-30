@@ -65,13 +65,18 @@ const mergeUserData = (user, detail) => {
     last_name: user.last_name,
     role: user.role,
 
-    company_name: detail.company_name,
-    company_type: detail.company_type,
-    section_title: detail.section_title,
-    description: detail.description,
-    avatar: detail.avatar,
-    country: detail.country,
-    city: detail.city,
+    company_name: detail?.company_name || null,
+    company_type: detail?.company_type || null,
+    company_location: detail?.company_location || null,
+    about: detail?.about || null,
+    country: detail?.country || null,
+    city: detail?.city || null,
+    phone_number: detail?.phone_number || null,
+    team_size: detail?.team_size || null,
+    clients: detail?.clients || null,
+    contact_info: detail?.contact_info || null,
+    rating: detail?.rating || null,
+    avatar: detail?.avatar || null,
   }
 }
 

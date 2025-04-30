@@ -233,6 +233,32 @@ const passwordReset = async (req, res) => {
   res.send("Password has been reset successfully");
 };
 
+const deleteProfile = async (req, res) => {
+  const { refresh_token } = req.cookies;
+
+  if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
+
+  let userData = await jwtService.verifyRefresh(refresh_token);
+
+  if (!userData) {
+    res.clearCookie("refresh_token");
+    throw ApiError.unauthorized("Invalid refresh token");
+  }
+
+  const { id } = req.params;
+
+  if (+userData.id !== +id) {
+    throw ApiError.forbidden("You are not authorized to edit this profile");
+  }
+
+  await User.destroy({
+    where: { id },
+  });
+
+  res.status(200).json({ message: "Profile deleted" })
+
+}
+
 const authController = {
   generateTokens,
   register,
@@ -242,6 +268,7 @@ const authController = {
   logout,
   requestPasswordReset,
   passwordReset,
+  deleteProfile,
 }
 
 module.exports = authController

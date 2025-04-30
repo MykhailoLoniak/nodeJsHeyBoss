@@ -5,8 +5,6 @@ const { where } = require("sequelize");
 const { Op } = require('sequelize');
 const { ApiError } = require("../exceptions/api.error");
 
-
-
 const createChatRoom = async (req, res) => {
   const { name, type, userIds } = req.body;
 
@@ -72,8 +70,6 @@ const getChatRooms = async (req, res) => {
     if (rooms.length === 0) {
       return res.status(404).json({ message: "Chat room not found" });
     }
-
-    // const rooms = await ChatRoom.findAll();
 
     res.status(200).json(rooms);
   } catch (error) {
@@ -237,9 +233,5 @@ const chatController = {
   searchUsers,
   deleteChatRoom,
 }
-
-// exports.createChatRoom = createChatRoom;
-// exports.getChatRooms = getChatRooms;
-// exports.getMessages = getMessages;
 
 module.exports = chatController;

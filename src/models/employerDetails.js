@@ -29,14 +29,7 @@ const EmployerDetails = client.define(
     company_location: {
       type: DataTypes.STRING,
     },
-
-    section_title: {
-      type: DataTypes.STRING,
-    },
-    description: {
-      type: DataTypes.STRING,
-    },
-    avatar: {
+    about: {
       type: DataTypes.STRING,
     },
     country: {
@@ -46,6 +39,21 @@ const EmployerDetails = client.define(
       type: DataTypes.STRING,
     },
     phone_number: {
+      type: DataTypes.STRING,
+    },
+    team_size: {
+      type: DataTypes.STRING,
+    },
+    clients: {
+      type:  DataTypes.ARRAY(DataTypes.STRING),
+    },
+    contact_info: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    rating: {
+      type: DataTypes.STRING,
+    },
+    avatar: {
       type: DataTypes.STRING,
     },
   },

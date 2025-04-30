@@ -3,8 +3,6 @@ const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails");
 const { jwtService } = require("../services/jwtService");
 
-
-
 const uploadAvatar = async (req, res) => {
   const id = req.params.id;
   const file = req.file;
@@ -97,7 +95,6 @@ const deleteAvatar = async (req, res) => {
     res.status(500).json({ error: "Failed to delete avatar" });
   })
 }
-
 
 const avatarController = {
   uploadAvatar,

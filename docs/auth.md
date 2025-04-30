@@ -34,18 +34,15 @@
 - `company_type` (string) – тип компанії (для `employer`)
 - `company_location` (string) – локація компанії (для `employer`)
 
-
 #### Відповідь (200 OK):
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "first_name": "Іван",
-    "last_name": "Петров",
-    "email": "ivan@example.com",
-    "role": "job_seeker"
-  }
+  "id": 1,
+  "first_name": "Іван",
+  "last_name": "Петров",
+  "email": "ivan@example.com",
+  "role": "job_seeker"
 }
 ```
 
@@ -65,13 +62,11 @@
 
 ```json
 {
-  "user": {
-    "id": 1,
-    "first_name": "Іван",
-    "last_name": "Петров",
-    "email": "ivan@example.com",
-    "role": "job_seeker"
-  }
+  "id": 1,
+  "first_name": "Іван",
+  "last_name": "Петров",
+  "email": "ivan@example.com",
+  "role": "job_seeker"
 }
 ```
 
@@ -151,7 +146,9 @@
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Password reset link has been sent to your email" }
+{
+  "message": "Password reset link has been sent to your email"
+}
 ```
 
 ### 7. Скидання пароля
@@ -170,5 +167,24 @@
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Password has been reset successfully" }
+{
+  "message": "Password has been reset successfully"
+}
 ```
+
+### 8. Видалити профіль
+
+**DELETE /api/auth/:id**
+
+Опис  
+Видаляє профіль користувача.
+
+Відповідь (200 OK):
+
+```json
+{
+  "message": "Profile deleted"
+}
+```
+
+---

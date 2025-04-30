@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
+const jobsRoutes = require("./routes/jobsRoutes")
 const authRoutes = require("./routes/authRoutes");
 const chatRouters = require("./routes/chatRoutes");
 const avatarRoutes = require("./routes/avatarRoutes")
@@ -43,6 +44,7 @@ setupWebSocketServer(server);
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/profile-job-seeker", profileJobSeekerRoutes);
 app.use("/api/auth/profile-company", profileCompanyRoutes);
+app.use("/api/auth/jobs", jobsRoutes);
 
 app.use("/api/auth/avatar", avatarRoutes)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

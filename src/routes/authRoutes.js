@@ -31,6 +31,7 @@ router.delete("/logout", catchError(authController.logout));
 router.get("/refresh", catchError(authController.refresh));
 router.post("/request-password-reset", loginLimiter, catchError(authController.requestPasswordReset));
 router.put("/password-reset/:token", catchError(authController.passwordReset));
+router.delete("/:id", catchError(authController.deleteProfile));
 router.get("/google", passportGoogle.authenticate("google", { scope: ["profile", "email"] }));
 router.get("/github", passportGithub.authenticate("github", { scope: ["user:email"] }));
 
