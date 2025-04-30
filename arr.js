@@ -95,7 +95,7 @@ const employerDetails = [
     clients: ['TechCorp', 'WebSolutions', 'Innovators Inc.'],  // Масив клієнтів
     contact_info: ['contact@techsolutions.com'],  // Масив контактної інформації
     rating: '4.8',
-    avatar: 'techsolutions_logo.png',
+    avatar: '/uploads/avatars/1.jpg',
   },
   {
     user_id: 3,
@@ -110,7 +110,7 @@ const employerDetails = [
     clients: ['Brandify', 'DesignLab', 'CreativeWorks'],
     contact_info: ['info@creativestudios.com'],
     rating: '4.5',
-    avatar: 'creativestudios_logo.png',
+    avatar: '/uploads/avatars/3.jpg',
   },
   {
     user_id: 5,
@@ -125,7 +125,7 @@ const employerDetails = [
     clients: ['InnovateNow', 'TechPartners', 'FutureTech'],
     contact_info: ['support@innovatetech.com'],
     rating: '4.9',
-    avatar: 'innovativetech_logo.png',
+    avatar: '/uploads/avatars/5.jpg',
   },
   {
     user_id: 7,
@@ -140,7 +140,7 @@ const employerDetails = [
     clients: ['GlobalCorp', 'MegaIndustries'],
     contact_info: ['consult@globalenterprise.com'],
     rating: '5.0',
-    avatar: 'globalenterprise_logo.png',
+    avatar: '/uploads/avatars/7.jpg',
   },
 ];
 
@@ -153,7 +153,7 @@ const contractorDetails = [
     portfolio: 'https://portfolio.olena.com',
     section_title: 'React Developer',
     description: 'Experienced React developer with a passion for building scalable web applications.',
-    avatar: 'olena_portfolio.png',
+    avatar: '/uploads/avatars/2.jpg',
     country: 'Ukraine',
     city: 'Kyiv',
     phone_number: '+380631234569',
@@ -165,7 +165,7 @@ const contractorDetails = [
     portfolio: 'https://portfolio.ivan.com',
     section_title: 'Brand Designer',
     description: 'Passionate graphic designer with a strong portfolio of branding and design work.',
-    avatar: 'ivan_portfolio.png',
+    avatar: '/uploads/avatars/4.jpg',
     country: 'Ukraine',
     city: 'Lviv',
     phone_number: '+380671234568',
@@ -177,7 +177,7 @@ const contractorDetails = [
     portfolio: 'https://portfolio.iryna.com',
     section_title: 'Mobile Developer',
     description: 'Experienced mobile developer focused on building native and cross-platform apps.',
-    avatar: 'iryna_portfolio.png',
+    avatar: '/uploads/avatars/6.jpg',
     country: 'Ukraine',
     city: 'Odesa',
     phone_number: '+380681234568',
@@ -189,7 +189,7 @@ const contractorDetails = [
     portfolio: 'https://portfolio.oleh.com',
     section_title: 'Data Scientist',
     description: 'Skilled data scientist with experience in machine learning and predictive modeling.',
-    avatar: 'oleh_portfolio.png',
+    avatar: '/uploads/avatars/8.jpg',
     country: 'Ukraine',
     city: 'Kyiv',
     phone_number: '+380631234570',
