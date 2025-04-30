@@ -2,20 +2,20 @@ require("dotenv").config();
 const { Router } = require("express");
 const rateLimit = require("express-rate-limit");
 
-const authController = require("../controllers/authController");
 const { catchError } = require("../utils/catchError");
 const passportGoogle = require("../passport/passportGoogle");
 const passportGithub = require("../passport/passportGithub.js");
-const { ApiError } = require("../exceptions/api.error.js");
+const authController = require("../controllers/authController");
+const userService = require("../services/userService.js");
 
 const router = Router();
 
 const oauthCallbackHandler = async (req, res) => {
   if (Object.keys(req.user).length === 2) {
-    return authController.saveNewUser(req, res);
+    return userService.saveNewUser(req, res);
   }
 
-  return authController.getToken(req, res);
+  return userService.getToken(req, res);
 };
 
 const loginLimiter = rateLimit({

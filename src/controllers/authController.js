@@ -1,14 +1,14 @@
-const { v4: uuid } = require("uuid");
 const bcrypt = require("bcryptjs");
+const { v4: uuid } = require("uuid");
 
-const { ContractorDetails } = require("../models/contractorDetails");
-const { EmployerDetails } = require("../models/employerDetails")
 const { User } = require("../models/user");
+const userServices = require("../services/userService");
+const { ApiError } = require("../exceptions/api.error");
+const { jwtService } = require("../services/jwtService");
 const tokenServices = require("../services/tokenService");
 const emailServices = require("../services/emailService");
-const { jwtService } = require("../services/jwtService");
-const { ApiError } = require("../exceptions/api.error");
-const userServices = require("../services/userService");
+const { EmployerDetails } = require("../models/employerDetails")
+const { ContractorDetails } = require("../models/contractorDetails");
 
 const generateTokens = async (res, user) => {
   const normalizeUser = userServices.normalize(user);
@@ -16,7 +16,6 @@ const generateTokens = async (res, user) => {
   const refreshAccessToken = jwtService.signRefresh(normalizeUser);
 
   await tokenServices.save(user.id, refreshAccessToken);
-
 
   if (res) {
     res.cookie("refresh_token", refreshAccessToken, {
@@ -63,9 +62,7 @@ const register = async (req, res) => {
 
   const exist_user = await userServices.findByEmail(email);
 
-  if (exist_user) {
-    throw ApiError.badRequest("User Already exist");
-  }
+  if (exist_user) throw ApiError.badRequest("User Already exist");
 
   const password = await bcrypt.hash(pass, 10);
   const activation_token = uuid();
@@ -77,9 +74,6 @@ const register = async (req, res) => {
     password: password,
     role,
     activation_token,
-    country,
-    city,
-    phone_number,
   });
 
   await emailServices.sendActivationEmail(email, activation_token);
@@ -89,7 +83,9 @@ const register = async (req, res) => {
       user_id: new_user.id,
       job_category,
       work_experience,
-      portfolio,
+      portfolio, country,
+      city,
+      phone_number,
     };
 
     await ContractorDetails.create(newContractor);
@@ -100,7 +96,9 @@ const register = async (req, res) => {
       user_id: new_user.id,
       company_location,
       company_name,
-      company_type,
+      company_type, country,
+      city,
+      phone_number,
     }
 
     await EmployerDetails.create(newEmployer);
@@ -113,15 +111,11 @@ const register = async (req, res) => {
 const activate = async (req, res) => {
   const { token } = req.params;
 
-  if (!token) {
-    throw ApiError.badRequest("Token not passed");
-  }
+  if (!token) throw ApiError.badRequest("Token not passed");
 
   const user = await User.findOne({ where: { activation_token: token } });
 
-  if (!user) {
-    throw ApiError.notFound(`No user found`);
-  }
+  if (!user) throw ApiError.notFound(`No user found`);
 
   user.activation_token = null;
   await user.save();
@@ -132,81 +126,50 @@ const activate = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!password || !email) {
-    throw ApiError.badRequest("Incorrect data");
-  }
+  if (!password || !email) throw ApiError.badRequest("Incorrect data");
 
   const user = await userServices.findByEmail(email);
 
-  if (!user) {
-    throw ApiError.badRequest("No such user");
-  }
+  if (!user) throw ApiError.badRequest("No such user");
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  if (!isPasswordValid) {
-    throw ApiError.badRequest("Wrong password");
-  }
+  if (!isPasswordValid) throw ApiError.badRequest("Wrong password");
 
-  if (user.activation_token) {
-    throw ApiError.forbidden("Confirm your email");
-  }
+  if (user.activation_token) throw ApiError.forbidden("Confirm your email");
 
   const tokens = await generateTokens(res, user);
 
-  if (!tokens) {
-    throw ApiError.unauthorized("Unauthorized");
-  }
-
-  // if (user.role === "job_seeker") {
-  //   const detail = await userServices.findByIdDetail(+user.id, user.role);
-
-  //   tokens = {
-  //     user: {
-  //       ...tokens.user,
-  //       job_category: detail.job_category,
-  //       work_experience: detail.work_experience,
-  //       portfolio: detail.portfolio,
-  //     },
-  //     accessToken: tokens.accessToken,
-  //   };
-  // }
-
-  // if (user.role === "employer") {
-  //   const detail = await userServices.findByIdDetail(+user.id, user.role);
-
-  //   tokens = {
-  //     user: {
-  //       ...tokens.user,
-  //       company_location: detail.company_location,
-  //       company_name: detail.company_name,
-  //       company_type: detail.company_type,
-  //     },
-  //     accessToken: tokens.accessToken,
-  //   };
-  // }
+  if (!tokens) throw ApiError.unauthorized("Unauthorized");
 
   return res.status(200).json(tokens);
 };
 
 const logout = async (req, res) => {
-  const { refresh_token } = req.cookies;
+  try {
+    const { refresh_token } = req.cookies;
 
-  const userData = await jwtService.verifyRefresh(refresh_token);
+    if (!refresh_token) throw ApiError.notFound('Refresh token not found')
 
-  c
+    const userData = await jwtService.verifyRefresh(refresh_token);
 
-  await tokenServices.remove(userData.id);
+    if (!userData) throw ApiError.unauthorized("Invalid token")
 
-  res.sendStatus(204);
+    await tokenServices.remove(userData.id);
+
+    res.clearCookie('refresh_token');
+    return res.sendStatus(204);
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
+
 
 const refresh = async (req, res) => {
   const { refresh_token } = req.cookies;
 
-  if (!refresh_token) {
-    throw ApiError.unauthorized("No refresh token provided");
-  }
+  if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
 
   const userData = await jwtService.verifyRefresh(refresh_token);
 
@@ -224,28 +187,21 @@ const refresh = async (req, res) => {
 
   const user = await userServices.findByEmail(userData.email);
 
-  if (!user) {
-    throw ApiError.notFound("User not found");
-  }
+  if (!user) throw ApiError.notFound("User not found");
 
   const send = await generateTokens(res, user);
 
   return res.status(200).json(send);
-
 };
 
 const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
-  if (!email) {
-    throw ApiError.badRequest(`Email is required`);
-  }
+  if (!email) throw ApiError.badRequest(`Email is required`);
 
   const user = await User.findOne({ where: { email } });
 
-  if (!user) {
-    throw ApiError.notFound(`User not found`);
-  }
+  if (!user) throw ApiError.notFound(`User not found`);
 
   const password_reset_token = uuid();
 
@@ -260,17 +216,13 @@ const passwordReset = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  if (!password) {
-    throw ApiError.badRequest("Password is required");
-  }
+  if (!password) throw ApiError.badRequest("Password is required");
 
   userServices.validatePassword(password)
 
   const user = await User.findOne({ where: { password_reset_token: token } });
 
-  if (!user) {
-    throw ApiError.badRequest(`Invalid or expired password reset token`);
-  }
+  if (!user) throw ApiError.badRequest(`Invalid or expired password reset token`);
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -281,25 +233,6 @@ const passwordReset = async (req, res) => {
   res.send("Password has been reset successfully");
 };
 
-const getToken = async (req, res) => {
-  const user = req.user;
-  let tokens = await authController.generateTokens(res, req.user);
-  if (!tokens) {
-    throw new ApiError(401, "Unauthorized");
-  }
-
-  const redirectUrl = `${process.env.CLIENT_ORIGIN}/auth?firstName=${encodeURIComponent(user.first_name)}&lastName=${encodeURIComponent(user.last_name)}&accessToken=${encodeURIComponent(tokens.accessToken)}`;
-
-  return res.redirect(redirectUrl);
-};
-
-const saveNewUser = (req, res) => {
-  const email = req.user.email;
-  const redirectUrl = `${process.env.CLIENT_ORIGIN}/register?email=${email}`;
-
-  return res.redirect(redirectUrl);
-}
-
 const authController = {
   generateTokens,
   register,
@@ -309,8 +242,6 @@ const authController = {
   logout,
   requestPasswordReset,
   passwordReset,
-  getToken,
-  saveNewUser,
 }
 
 module.exports = authController

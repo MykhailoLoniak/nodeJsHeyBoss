@@ -14,7 +14,7 @@ const Jobs = client.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'users', // 🔧 Ім’я таблиці, а не модель
+        model: 'users', 
         key: 'id',
       },
       onDelete: 'CASCADE',
@@ -28,10 +28,7 @@ const Jobs = client.define(
     employment_type: {
       type: DataTypes.STRING,
     },
-    min_salary: {
-      type: DataTypes.INTEGER,
-    },
-    max_salary: {
+    salary: {
       type: DataTypes.INTEGER,
     },
     short_summary: {

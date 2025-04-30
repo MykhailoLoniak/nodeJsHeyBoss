@@ -64,15 +64,36 @@ const mergeUserData = (user, detail) => {
     first_name: user.first_name,
     last_name: user.last_name,
     role: user.role,
+
     company_name: detail.company_name,
     company_type: detail.company_type,
-    company_location: detail.company_location,
-    contact_info: detail.contact_info,
+    section_title: detail.section_title,
     description: detail.description,
-    team_size: detail.team_size,
-    clients: detail.clients,
+    avatar: detail.avatar,
+    country: detail.country,
+    city: detail.city,
   }
 }
+
+
+const getToken = async (req, res) => {
+  const user = req.user;
+  let tokens = await authController.generateTokens(res, req.user);
+
+  if (!tokens) throw new ApiError(401, "Unauthorized");
+
+  const redirectUrl = `${process.env.CLIENT_ORIGIN}/auth?firstName=${encodeURIComponent(user.first_name)}&lastName=${encodeURIComponent(user.last_name)}&accessToken=${encodeURIComponent(tokens.accessToken)}`;
+
+  return res.redirect(redirectUrl);
+};
+
+const saveNewUser = (req, res) => {
+  const email = req.user.email;
+  const redirectUrl = `${process.env.CLIENT_ORIGIN}/register?email=${email}`;
+
+  return res.redirect(redirectUrl);
+}
+
 
 const userService = {
   normalize,
@@ -83,6 +104,8 @@ const userService = {
   validateEmail,
   validatePassword,
   mergeUserData,
+  saveNewUser,
+  getToken,
 }
 
 module.exports = userService;

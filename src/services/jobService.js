@@ -4,7 +4,7 @@ const getJobs = async (user_id) => {
   return await Jobs.findAll({ where: { user_id } });
 }
 
-const gerOneJob = async (id) => {
+const getOneJob = async (id) => {
   return await Jobs.findOne({ where: { id } });
 }
 
@@ -43,7 +43,7 @@ const newJob = async (req) => {
 const jobService = {
   getJobs,
   newJob,
-  gerOneJob
+  getOneJob
 }
 
 module.exports = jobService;

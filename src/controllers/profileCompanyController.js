@@ -8,6 +8,7 @@ const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
 const { Jobs } = require("../models/jobs");
 const jobService = require("../services/jobService");
+const { deleteImage } = require("../utils/fs");
 
 
 const getProfile = async (req, res) => {
@@ -74,16 +75,45 @@ const getJobs = async (req, res) => {
 
   return res.status(200).json(jobs);
 }
-
 const newJob = async (req, res) => {
-  if (req.body.min_salary && req.body.max_salary && +req.body.min_salary > +req.body.max_salary) {
+  const {
+    user_id,
+    job_title,
+    location,
+    employment_type,
+    min_salary,
+    max_salary,
+    short_summary,
+    full_description,
+    application_deadline,
+    visibility,
+    status,
+  } = req.body;
+
+  // Перевірка, чи мінімальна зарплата не більша за максимальну
+  if (min_salary && max_salary && +min_salary > +max_salary) {
     throw ApiError.badRequest("Min salary can't be more than max salary");
   }
 
-  const job = await jobService.newJob(req)
+  // Створення нової вакансії
+  const job = await Jobs.create({
+    user_id,
+    job_title,
+    location,
+    employment_type,
+    min_salary,
+    max_salary,
+    short_summary,
+    full_description,
+    application_deadline: application_deadline.toLowerCase(),
+    visibility: visibility.toLowerCase() || "public",
+    status: status || "draft",
+  });
 
+  // Повернення створеної вакансії в відповіді
   return res.status(201).json(job);
 }
+
 
 const updateJob = async (req, res) => {
   const { id } = req.params;
@@ -100,7 +130,7 @@ const updateJob = async (req, res) => {
     status,
   } = req.body;
 
-  const job = await jobService.gerOneJob(id)
+  const job = await jobService.getOneJob(id)
 
   if (!job) throw ApiError.badRequest("No such job");
 
@@ -174,6 +204,9 @@ const updateJobStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body; // статус може бути, наприклад, 'active', 'closed', 'draft'
 
+  console.log("__________________________________", status);
+
+
   const job = await Jobs.findOne({ where: { id } });
 
   if (!job) {
@@ -213,7 +246,7 @@ const deleteJob = async (req, res) => {
 const getEmployerReviews = async (req, res) => {
   const { id } = req.params;
 
-  const user = await User.findAll({ where: { id } });
+  const user = await User.findOne({ where: { id } });
 
   if (!user) {
     throw ApiError.badRequest("No such user");
@@ -231,13 +264,13 @@ const getEmployerReviews = async (req, res) => {
 const newEmployerReviews = async (req, res) => {
   const { rating, comment, job_id, reviewer_id, employer_id } = req.body;
 
-  const reviewer = await User.findAll({ where: { reviewer_id } });
+  const reviewer = await User.findOne({ where: { reviewer_id } });
 
   if (!reviewer) {
     throw ApiError.badRequest("No such reviewer");
   }
 
-  const employer = await User.findAll({ where: { employer_id } });
+  const employer = await User.findOne({ where: { employer_id } });
 
   if (!employer) {
     throw ApiError.badRequest("No such employer");
@@ -272,60 +305,6 @@ const newEmployerReviews = async (req, res) => {
   return res.status(201).json(review.dataValues);
 }
 
-const uploadAvatar = async (req, res) => {
-  const id = req.params.id;
-  const file = req.file;
-
-  if (!file) {
-    return res.status(400).json({ error: "Файл не надано" });
-  }
-
-  const avatarUrl = `/uploads/avatars/${file.filename}`;
-
-  EmployerDetails.update(
-    { avatar: avatarUrl },
-    { where: { user_id: id } }
-  ).then(() => {
-    res.status(200).json(
-      {
-        message: "Аватар успішно оновлено",
-        avatarUrl: `${process.env.BACKEND_ORIGIN}/${avatarUrl}`
-      });
-  }).catch((error) => {
-    res.status(500).json({ error: "Не вдалося оновити аватар" });
-  }
-  )
-};
-
-const getAvatar = (req, res) => {
-  const { id } = req.params;
-
-  const detail = EmployerDetails.findOne({ where: { user_id: id } })
-
-  if (!detail || !detail.avatar) {
-    return res.status(404).json({ error: "Avatar not found" });
-  }
-
-  const avatarUrl = `${process.env.BACKEND_ORIGIN}${detail.avatar}`;
-
-  return res.status(200).json({ avatarUrl });
-}
-
-const deleteAvatar = async (req, res) => {
-  const { id } = req.params;
-
-  const { refresh_token } = req.cookies;
-
-  const user = await jwtService.verifyRefresh(refresh_token);
-
-  if (!user || !refresh_token) throw ApiError.unauthorized();
-  if (user.id !== +id) throw ApiError.forbidden("You are not authorized to edit this profile");
-
-  const detail = EmployerDetails.findOne({ where: { user_id: id } })
-
-
-}
-
 const profileController = {
   getProfile,
   putProfile,
@@ -337,8 +316,6 @@ const profileController = {
   updateJobStatus,
   getEmployerReviews,
   newEmployerReviews,
-  uploadAvatar,
-  getAvatar,
 };
 
 module.exports = profileController

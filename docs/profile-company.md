@@ -24,16 +24,18 @@
 
 ```json
 {
-  "profile": {
-    "id": 12,
-    "user_id": 7,
-    "company_name": "TechNova",
-    "company_type": "IT",
-    "contact_info": ["info@technova.com", "+380991234567"],
-    "team_size": "11-50",
-    "clients": "Google, Microsoft",
-    "description": "New company description"
-  }
+  "user_id": string,
+  "email": string,
+  "first_name": string,
+  "last_name": string,
+  "role": string,
+  "company_name": string,
+  "company_type": string,
+  "section_title": string,
+  "description": string,
+  "avatar": string,
+  "country": string,
+  "city": string,
 }
 ```
 
@@ -53,19 +55,28 @@
 
 #### Тіло запиту (тільки змінювані поля):
 
-- `company_name` (string) — назва компанії
-- `company_type` (string) — тип компанії (наприклад: IT, будівництво тощо)
-- `company_location` (string) — розташування компанії
-- `description` (string) — опис компанії
-- `contact_info` (array of string) — список контактних даних (email, телефон тощо)
-- `team_size` (string) — розмір команди (наприклад: "1-10", "11-50")
-- `clients` (string) — ключові клієнти
+```json
+{
+  "user_id": string,
+  "email": string,
+  "first_name": string,
+  "last_name": string,
+  "role": string,
+  "company_name": string,
+  "company_type": string,
+  "section_title": string,
+  "description": string,
+  "avatar": string,
+  "country": string,
+  "city": string,
+}
+```
 
 #### Відповідь (200 OK):
 
 ```json
 {
-  "message": "Профіль оновлено успішно",
+  "message": "Profile updated",
   "data": {
     user_id,
     email,
@@ -98,26 +109,26 @@
 #### Відповідь (200 OK):
 
 ```json
-{
-  "jobs": [
-  {
-    "id": 1,
-    "job_title": "Frontend Developer",
-    "location": "Madrid",
-    "employment_type": "full-time",
-    "min_salary": 3000,
-    "max_salary": 4000,
-    "status": "active",
-    "company_name": "TechCo",
-    "company_type": "Software",
-    "contact_info": ["email@example.com", "+123456789"],
-    "team_size": "11-50",
-    "clients": "Google, Amazon"
-  },
-  ...
+[
+    {
+        "id": 1,
+        "user_id": 2,
+        "job_title": "Backend Developer",
+        "location": "New York, USA",
+        "employment_type": "Part-time",
+        "salary": null,
+        "short_summary": "We are looking for an experienced Backend Developer to work with our API team.",
+        "full_description": "The Backend Developer will be responsible for designing and maintaining the server-side logic of our applications. Knowledge of Node.js, Express, and SQL databases is required.",
+        "application_deadline": "by email",
+        "visibility": "private",
+        "status": "draft",
+        "createdAt": "2025-04-28T12:00:03.228Z",
+        "updatedAt": "2025-04-28T12:00:03.228Z"
+    },
+    {
+      ...
+    }
 ]
-
-}
 ```
 
 ### 4. Створення нової вакансії
@@ -130,22 +141,39 @@
 
 #### Тіло запиту:
 
-- `user_id` (string)
-- `job_title` (string)
-- `location` (string)
-- `full_description` (string)
-- `employment_type` (string)
-- `min_salary` (number)
-- `max_salary` (number)
-- `short_summary` (string)
-- `application_deadline` (string) - 'via platform inbox', 'external link', 'by email'
-- `visibility` (string) - 'public', 'private', 'internal'
-- `status` (string) - 'active', 'closed', 'draft'
+```json
+ {
+    "user_id": 2,
+    "job_title": "Backend Developer",
+    "location": "New York, USA",
+    "employment_type": "Part-time",
+    "salary": 45000,
+    "short_summary": "We are looking for an experienced Backend Developer to work with our API team.",
+    "full_description": "The Backend Developer will be responsible for designing and maintaining the server-side logic of our applications. Knowledge of Node.js, Express, and SQL databases is required.",
+    "application_deadline": "by email",
+    "visibility": "private",
+    "status": "draft",
+  },
+```
 
 #### Відповідь (201 Created):
 
 ```json
-{ "message": "Вакансія створена успішно", "job_id": 12 }
+{
+  "id": 1,
+  "user_id": 2,
+  "job_title": "Backend Developer",
+  "location": "New York, USA",
+  "employment_type": "Part-time",
+  "short_summary": "We are looking for an experienced Backend Developer to work with our API team.",
+  "full_description": "The Backend Developer will be responsible for designing and maintaining the server-side logic of our applications. Knowledge of Node.js, Express, and SQL databases is required.",
+  "application_deadline": "by email",
+  "visibility": "private",
+  "status": "draft",
+  "updatedAt": "2025-04-28T12:00:03.228Z",
+  "createdAt": "2025-04-28T12:00:03.228Z",
+  "salary": null
+}
 ```
 
 ---
@@ -164,8 +192,7 @@
 
 #### Тіло запиту:
 
-`job_title` (string)
-
+- `job_title` (string)
 - `location` (string)
 - `full_description` (string)
 - `employment_type` (string)
@@ -179,7 +206,9 @@
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Вакансію оновлено успішно" }
+{
+  "message": "Job updated"
+}
 ```
 
 ---
@@ -207,8 +236,7 @@
 #### Відповідь (200 OK):
 
 ```json
-{
-  "jobs": [
+[
     {
       "id": 1,
       "job_title": "Frontend Developer",
@@ -225,7 +253,6 @@
     },
     ...
   ]
-}
 ```
 
 ---
@@ -245,14 +272,16 @@
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Вакансію видалено успішно" }
+{
+  "message": "Job deleted"
+}
 ```
 
 ---
 
 ### 8. Оновлення статусу вакансії
 
-**PUT /api/auth/profile-company/job/:id/status**
+**PUT /api/auth/profile-company/status-job/:id**
 
 #### Опис
 
@@ -264,10 +293,12 @@
 
 #### Тіло запиту:
 
-- `status` (string) – новий статус
+- `status` (string) – новий статус 'active', 'closed', 'draft'
 
 #### Відповідь (200 OK):
 
 ```json
-{ "message": "Статус вакансії оновлено" }
+{
+  "message": "Job status updated"
+}
 ```

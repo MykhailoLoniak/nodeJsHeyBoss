@@ -35,7 +35,19 @@ const ContractorDetails = client.define(
     description: {
       type: DataTypes.STRING,
     },
-    position: {
+    // position: {
+    //   type: DataTypes.STRING,
+    // },
+    avatar: {
+      type: DataTypes.STRING,
+    },
+    country: {
+      type: DataTypes.STRING,
+    },
+    city: {
+      type: DataTypes.STRING,
+    },
+    phone_number: {
       type: DataTypes.STRING,
     },
   },
