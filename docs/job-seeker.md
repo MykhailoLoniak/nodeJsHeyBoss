@@ -34,6 +34,7 @@
     "city": string,
     "phone_number": string,
     "avatar": string,
+    "contact_info": array,
   },
   ...
 ]
@@ -68,6 +69,7 @@
     "city": string,
     "phone_number": string,
     "avatar": string,
+    "contact_info": array,
   }
 ```
 
@@ -96,6 +98,7 @@
   "location": STRING,
   "city": STRING,
   "phone_number": STRING,
+  "contact_info": array,
 }
 ```
 

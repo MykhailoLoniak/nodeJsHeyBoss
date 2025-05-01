@@ -20,9 +20,6 @@ const Token = client.define('token', {
   underscored: true,
 });
 
-Token.belongsTo(User, { foreignKey: 'userId' });
-User.hasOne(Token, { foreignKey: 'userId' });
-
 module.exports = {
   Token,
 };

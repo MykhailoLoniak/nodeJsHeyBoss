@@ -367,11 +367,217 @@ const jobs = [
   }
 ];
 
+const reviewsEmployer = [
+  // Frontend Developer (job_id = 1)
+  {
+    job_id: 1,
+    user_id: 2,
+    rating: 5,
+    comment: "Чудова компанія, процес співбесіди пройшов дуже професійно.",
+  },
+  {
+    job_id: 1,
+    user_id: 4,
+    rating: 4,
+    comment: "Цікавий проект, але хотілося б більше гнучкості у графіку.",
+  },
+  {
+    job_id: 1,
+    user_id: 6,
+    rating: 5,
+    comment: "Гарна команда та технологічний стек.",
+  },
+  {
+    job_id: 1,
+    user_id: 8,
+    rating: 4,
+    comment: "Гарна можливість для розвитку, але зарплата могла бути трохи вищою.",
+  },
+
+  // Backend Developer (job_id = 2)
+  {
+    job_id: 2,
+    user_id: 2,
+    rating: 5,
+    comment: "Процес найму був швидкий та прозорий.",
+  },
+  {
+    job_id: 2,
+    user_id: 4,
+    rating: 4,
+    comment: "Сподобалась структура інтерв’ю, але тестове було трохи складне.",
+  },
+  {
+    job_id: 2,
+    user_id: 6,
+    rating: 5,
+    comment: "Класна технічна команда, чудова підтримка.",
+  },
+  {
+    job_id: 2,
+    user_id: 8,
+    rating: 3,
+    comment: "Гарна роль, але забагато годин без оплати понаднормових.",
+  },
+
+  // Fullstack Developer (job_id = 3)
+  {
+    job_id: 3,
+    user_id: 2,
+    rating: 4,
+    comment: "Баланс між фронтендом і бекендом хороший, цікаві задачі.",
+  },
+  {
+    job_id: 3,
+    user_id: 4,
+    rating: 5,
+    comment: "Можливість розвиватися як фулстек — це саме те, що шукала.",
+  },
+  {
+    job_id: 3,
+    user_id: 6,
+    rating: 5,
+    comment: "Приємна команда і дружній керівник.",
+  },
+  {
+    job_id: 3,
+    user_id: 8,
+    rating: 4,
+    comment: "Чудова роль, але хотілося б трохи вищу ставку для part-time.",
+  },
+
+  // Product Manager (job_id = 4)
+  {
+    job_id: 4,
+    user_id: 2,
+    rating: 5,
+    comment: "Вражений рівнем організації процесів в компанії.",
+  },
+  {
+    job_id: 4,
+    user_id: 4,
+    rating: 4,
+    comment: "Цікава роль, але трохи не вистачає гнучкості.",
+  },
+  {
+    job_id: 4,
+    user_id: 6,
+    rating: 5,
+    comment: "Чудова компанія для розвитку навичок продакт-менеджменту.",
+  },
+  {
+    job_id: 4,
+    user_id: 8,
+    rating: 5,
+    comment: "Команда підтримує інновації, відчуваєш свою цінність.",
+  },
+  {
+    job_id: 4,
+    user_id: 10,
+    rating: 4,
+    comment: "Дуже професійне середовище, трохи довгий процес найму.",
+  },
+];
+
+const reviewsJobSeeker = [
+  // Відгуки компанії про працівників, які працювали за вакансією job_id = 1 (Frontend Developer)
+  {
+    user_id: 2,
+    job_id: 1,
+    company_id: 1,
+    rating: 5,
+    comment: "Сергій був чудовим фронтенд-розробником. Виконав завдання навіть раніше дедлайну.",
+    created_at: "2025-04-01T12:00:00Z",
+  },
+  {
+    user_id: 4,
+    job_id: 1,
+    company_id: 1,
+    rating: 4,
+    comment: "Марина добре розбирається в React, але трохи затримувала комунікацію.",
+    created_at: "2025-04-02T12:30:00Z",
+  },
+  {
+    user_id: 6,
+    job_id: 1,
+    company_id: 1,
+    rating: 3,
+    comment: "Максим працює стабільно, але потребує більше самостійності.",
+    created_at: "2025-04-03T11:00:00Z",
+  },
+
+  // Відгуки про працівників з вакансії job_id = 2 (Backend Developer)
+  {
+    user_id: 2,
+    job_id: 2,
+    company_id: 2,
+    rating: 5,
+    comment: "Професійний підхід до роботи. Node.js у руках Андрія — потужна зброя.",
+    created_at: "2025-04-04T14:10:00Z",
+  },
+  {
+    user_id: 4,
+    job_id: 2,
+    company_id: 2,
+    rating: 4,
+    comment: "Олена якісно працює, хоча треба трохи більше уваги до безпеки API.",
+    created_at: "2025-04-05T13:45:00Z",
+  },
+  {
+    user_id: 6,
+    job_id: 2,
+    company_id: 2,
+    rating: 5,
+    comment: "Дмитро дуже комунікабельний і легко інтегрувався в команду.",
+    created_at: "2025-04-06T15:30:00Z",
+  },
+
+  // Відгуки про Fullstack Developer (job_id = 3)
+  {
+    user_id: 2,
+    job_id: 3,
+    company_id: 3,
+    rating: 5,
+    comment: "Сильні навички у всьому стеку. Самостійно завершив складне завдання.",
+    created_at: "2025-04-07T10:00:00Z",
+  },
+  {
+    user_id: 6,
+    job_id: 3,
+    company_id: 3,
+    rating: 4,
+    comment: "Добре виконував завдання, але потребує більше уваги до UI-дрібниць.",
+    created_at: "2025-04-08T11:20:00Z",
+  },
+
+  // Відгуки на Product Manager (job_id = 4)
+  {
+    user_id: 4,
+    job_id: 4,
+    company_id: 4,
+    rating: 5,
+    comment: "Наталя вміє координувати команду. З нею легко досягати цілей.",
+    created_at: "2025-04-09T09:15:00Z",
+  },
+  {
+    user_id: 6,
+    job_id: 4,
+    company_id: 4,
+    rating: 3,
+    comment: "Інколи складно дається комунікація, але в загальному — хороша організація роботи.",
+    created_at: "2025-04-10T14:40:00Z",
+  },
+];
+
+
+
 const data = {
   users,
   employerDetails,
   contractorDetails,
   jobs,
+  reviewsEmployer,
+  reviewsJobSeeker
 }
 
 module.exports = data

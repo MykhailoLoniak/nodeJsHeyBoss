@@ -50,6 +50,9 @@ const ContractorDetails = client.define(
     phone_number: {
       type: DataTypes.STRING,
     },
+    contact_info: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
   },
   {
     tableName: "contractor_details",
@@ -57,7 +60,6 @@ const ContractorDetails = client.define(
   }
 );
 
-ContractorDetails.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = {
   ContractorDetails,

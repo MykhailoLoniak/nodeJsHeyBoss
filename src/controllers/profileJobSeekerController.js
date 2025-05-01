@@ -30,11 +30,13 @@ const getAllProfile = async (req, res) => {
         portfolio: detail?.portfolio || null,
         section_title: detail?.section_title || null,
         description: detail?.description || null,
-        country: user.country,
-        location: user.location,
-        city: user.city,
-        phone_number: user.phone_number,
+        country: detail?.country || null,
+        location: detail?.location || null,
+        city: detail?.city || null,
+        phone_number: detail?.phone_number || null,
         avatar: detail?.avatar || null,
+        contact_info: detail?.contact_info || null,
+
       };
     });
 
@@ -77,11 +79,12 @@ const getProfile = async (req, res) => {
     portfolio: detail?.portfolio || null,
     section_title: detail?.section_title || null,
     description: detail?.description || null,
-    country: user.country,
-    location: user.location,
-    city: user.city,
-    phone_number: user.phone_number,
+    country: detail.country || null,
+    location: detail.location || null,
+    city: detail.city || null,
+    phone_number: detail.phone_number,
     avatar: detail?.avatar || null,
+    contact_info: detail?.contact_info || null,
   }
 
   return res.status(200).json(data);
@@ -118,6 +121,7 @@ const putProfile = async (req, res) => {
     location,
     city,
     phone_number,
+    contact_info,
   } = req.body;
 
   const user = await User.findOne({ where: { id } });
@@ -152,6 +156,7 @@ const putProfile = async (req, res) => {
     location,
     city,
     phone_number,
+    contact_info,
   })
 
   const data = {
@@ -166,11 +171,12 @@ const putProfile = async (req, res) => {
     portfolio: detail?.portfolio || null,
     section_title: detail?.section_title || null,
     description: detail?.description || null,
-    country: user?.country || null,
-    location: user?.location || null,
-    city: user?.city || null,
-    phone_number: user?.phone_number || null,
+    country: detail?.country || null,
+    location: detail?.location || null,
+    city: detail?.city || null,
+    phone_number: detail?.phone_number || null,
     avatar: detail?.avatar || null,
+    contact_info: detail?.contact_info || null,
   }
 
   return res.status(200).json(data)

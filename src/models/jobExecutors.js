@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { client } = require('../utils/db.js');
-const { Jobs } = require('./jobs.js');
+const { Job } = require('./jobs.js');
 const { User } = require('./user.js');
 
 const JobExecutors = client.define(
@@ -14,7 +14,7 @@ const JobExecutors = client.define(
     job_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: Jobs,
+        model: Job,
         key: 'id',
       },
     },
@@ -42,10 +42,6 @@ const JobExecutors = client.define(
     timestamps: true,
   }
 );
-
-// Визначення зв'язку між моделями
-JobExecutors.belongsTo(Jobs, { foreignKey: "job_id" });
-JobExecutors.belongsTo(User, { foreignKey: "user_id" });
 
 module.exports = {
   JobExecutors,

@@ -63,8 +63,6 @@ const EmployerDetails = client.define(
   }
 );
 
-EmployerDetails.belongsTo(User, { foreignKey: "user_id" });
-
 module.exports = {
   EmployerDetails,
 };

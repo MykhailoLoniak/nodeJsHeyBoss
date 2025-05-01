@@ -1,11 +1,11 @@
-const { Jobs } = require("../models/jobs");
+const {  Job } = require("../models/job");
 
 const getJobs = async (user_id) => {
-  return await Jobs.findAll({ where: { user_id } });
+  return await Job.findAll({ where: { user_id } });
 }
 
 const getOneJob = async (id) => {
-  return await Jobs.findOne({ where: { id } });
+  return await Job.findOne({ where: { id } });
 }
 
 const newJob = async (req) => {
@@ -23,7 +23,7 @@ const newJob = async (req) => {
     status,
   } = req.body;
 
-  const job = await Jobs.create({
+  const job = await Job.create({
     user_id,
     job_title,
     location,

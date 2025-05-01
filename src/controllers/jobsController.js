@@ -1,6 +1,6 @@
 const { ApiError } = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
-const { Jobs } = require('../models/jobs');
+const { Job } = require('../models/job');
 const { Op } = require("sequelize");
 
 const VALID_APPLICATION_DEADLINES = ['via platform inbox', 'external link', 'by email'];
@@ -9,7 +9,7 @@ const VALID_STATUS = ['active', 'closed', 'draft'];
 
 const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Jobs.findAll();
+    const jobs = await Job.findAll();
 
     return res.status(200).json(jobs);
   } catch (error) {
@@ -23,7 +23,7 @@ const getJobs = async (req, res) => {
     const { id } = req.params;
     if (!id) throw ApiError.badRequest('ID parameter is required')
 
-    const jobs = await Jobs.findAll({ where: { company_id: id } });
+    const jobs = await Job.findAll({ where: { company_id: id } });
     if (!id) throw ApiError.badRequest('No job with this ID found')
 
     return res.status(200).json(jobs);
@@ -92,7 +92,7 @@ const filterJobs = async (req, res) => {
       where.updatedAt = { [Op.gte]: new Date(updatedAt) };
     }
 
-    const jobs = await Jobs.findAll({ where });
+    const jobs = await Job.findAll({ where });
 
     if (!jobs.length) {
       return res.status(404).json({ message: "No jobs found" });
@@ -144,7 +144,7 @@ const newJobs = async (req, res, next) => {
       throw ApiError.badRequest(`status must be one of: ${VALID_STATUS.join(', ')}`);
     }
 
-    const job = await Jobs.create({
+    const job = await Job.create({
       company_id: Number(company_id),
       job_title,
       location,
@@ -205,7 +205,7 @@ const putJob = async (req, res, next) => {
       throw ApiError.badRequest(`status must be one of: ${VALID_STATUS.join(', ')}`);
     }
 
-    const [updatedCount] = await Jobs.update(
+    const [updatedCount] = await Job.update(
       {
         company_id,
         job_title,
@@ -225,7 +225,7 @@ const putJob = async (req, res, next) => {
       return res.status(404).json({ message: "No job found or nothing updated" });
     }
 
-    const updatedJob = await Jobs.findByPk(id);
+    const updatedJob = await Job.findByPk(id);
 
     res.status(200).json({ message: "Updated successfully", job: updatedJob });
   } catch (error) {
@@ -246,12 +246,12 @@ const deleteJob = async (req, res) => {
     }
 
     const { id } = req.params;
-    const job = Jobs.findOne({ where: { id } })
+    const job = Job.findOne({ where: { id } })
     if (+userData.id !== +job.company_id) {
       throw ApiError.forbidden("You are not authorized to edit this profile");
     }
 
-    await Jobs.destroy({
+    await Job.destroy({
       where: { id },
     });
 

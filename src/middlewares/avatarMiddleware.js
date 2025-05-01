@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
 
-    const id = req.params.id || Date.now(); // req.params.id працюватиме, якщо middleware буде після express router
+    const id = req.params.id || Date.now(); 
     const ext = path.extname(file.originalname);
     cb(null, `${id}-${Date.now()}${ext}`);
   }

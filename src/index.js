@@ -11,6 +11,7 @@ const jobsRoutes = require("./routes/jobsRoutes")
 const authRoutes = require("./routes/authRoutes");
 const chatRouters = require("./routes/chatRoutes");
 const avatarRoutes = require("./routes/avatarRoutes")
+const reviewsRoutes = require("./routes/reviewsRoutes")
 const { authMiddleware } = require("./middlewares/authMiddleware");
 const { errorMiddleware } = require("./middlewares/errorMiddleware");
 const profileCompanyRoutes = require("./routes/profileCompanyRoutes");
@@ -45,6 +46,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/auth/profile-job-seeker", profileJobSeekerRoutes);
 app.use("/api/auth/profile-company", profileCompanyRoutes);
 app.use("/api/auth/jobs", jobsRoutes);
+app.use("/api/auth/reviews", reviewsRoutes);
 
 app.use("/api/auth/avatar", avatarRoutes)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

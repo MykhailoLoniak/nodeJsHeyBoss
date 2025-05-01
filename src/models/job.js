@@ -2,8 +2,8 @@ const { DataTypes } = require('sequelize');
 const { client } = require('../utils/db.js');
 const { User } = require('./user.js');
 
-const Jobs = client.define(
-  "jobs",
+const Job = client.define(
+  "job",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -50,14 +50,13 @@ const Jobs = client.define(
 
   },
   {
-    tableName: "jobs",
+    tableName: "job",
     underscored: true,
     timestamps: true,
   }
 );
 
-Jobs.belongsTo(User, { foreignKey: "company_id" });
 
 module.exports = {
-  Jobs,
+  Job,
 };
