@@ -482,25 +482,25 @@ const reviewsEmployer = [
 const reviewsJobSeeker = [
   // Відгуки компанії про працівників, які працювали за вакансією job_id = 1 (Frontend Developer)
   {
-    user_id: 2,
+    job_seeker_id: 2,
     job_id: 1,
-    company_id: 1,
+    employer_id: 1,
     rating: 5,
     comment: "Сергій був чудовим фронтенд-розробником. Виконав завдання навіть раніше дедлайну.",
     created_at: "2025-04-01T12:00:00Z",
   },
   {
-    user_id: 4,
+    job_seeker_id: 4,
     job_id: 1,
-    company_id: 1,
+    employer_id: 1,
     rating: 4,
     comment: "Марина добре розбирається в React, але трохи затримувала комунікацію.",
     created_at: "2025-04-02T12:30:00Z",
   },
   {
-    user_id: 6,
+    job_seeker_id: 6,
     job_id: 1,
-    company_id: 1,
+    employer_id: 1,
     rating: 3,
     comment: "Максим працює стабільно, але потребує більше самостійності.",
     created_at: "2025-04-03T11:00:00Z",
@@ -508,25 +508,25 @@ const reviewsJobSeeker = [
 
   // Відгуки про працівників з вакансії job_id = 2 (Backend Developer)
   {
-    user_id: 2,
+    job_seeker_id: 2,
     job_id: 2,
-    company_id: 2,
+    employer_id: 2,
     rating: 5,
     comment: "Професійний підхід до роботи. Node.js у руках Андрія — потужна зброя.",
     created_at: "2025-04-04T14:10:00Z",
   },
   {
-    user_id: 4,
+    job_seeker_id: 4,
     job_id: 2,
-    company_id: 2,
+    employer_id: 2,
     rating: 4,
     comment: "Олена якісно працює, хоча треба трохи більше уваги до безпеки API.",
     created_at: "2025-04-05T13:45:00Z",
   },
   {
-    user_id: 6,
+    job_seeker_id: 6,
     job_id: 2,
-    company_id: 2,
+    employer_id: 2,
     rating: 5,
     comment: "Дмитро дуже комунікабельний і легко інтегрувався в команду.",
     created_at: "2025-04-06T15:30:00Z",
@@ -534,17 +534,17 @@ const reviewsJobSeeker = [
 
   // Відгуки про Fullstack Developer (job_id = 3)
   {
-    user_id: 2,
+    job_seeker_id: 2,
     job_id: 3,
-    company_id: 3,
+    employer_id: 3,
     rating: 5,
     comment: "Сильні навички у всьому стеку. Самостійно завершив складне завдання.",
     created_at: "2025-04-07T10:00:00Z",
   },
   {
-    user_id: 6,
+    job_seeker_id: 6,
     job_id: 3,
-    company_id: 3,
+    employer_id: 3,
     rating: 4,
     comment: "Добре виконував завдання, але потребує більше уваги до UI-дрібниць.",
     created_at: "2025-04-08T11:20:00Z",
@@ -552,17 +552,17 @@ const reviewsJobSeeker = [
 
   // Відгуки на Product Manager (job_id = 4)
   {
-    user_id: 4,
+    job_seeker_id: 4,
     job_id: 4,
-    company_id: 4,
+    employer_id: 4,
     rating: 5,
     comment: "Наталя вміє координувати команду. З нею легко досягати цілей.",
     created_at: "2025-04-09T09:15:00Z",
   },
   {
-    user_id: 6,
+    job_seeker_id: 6,
     job_id: 4,
-    company_id: 4,
+    employer_id: 4,
     rating: 3,
     comment: "Інколи складно дається комунікація, але в загальному — хороша організація роботи.",
     created_at: "2025-04-10T14:40:00Z",

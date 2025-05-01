@@ -5,6 +5,7 @@ const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
 
 
+
 const getAllProfile = async (req, res) => {
   const users = await User.findAll({ where: { role: "employer" } });
   const userIds = users.map(user => user.id);
@@ -15,8 +16,9 @@ const getAllProfile = async (req, res) => {
 
   const detailsMap = new Map(details.map(detail => [detail.user_id, detail]));
 
-  const result = users.map(user => {
+  const result = users.map(async user => {
     const detail = detailsMap.get(user.id);
+    const rating = await userServices.getRating(user.id);
 
     return {
       user_id: user.id,
@@ -37,6 +39,7 @@ const getAllProfile = async (req, res) => {
       contact_info: detail?.contact_info || null,
       rating: detail?.rating || null,
       avatar: detail?.avatar || null,
+      rating: rating || null,
     };
   });
 

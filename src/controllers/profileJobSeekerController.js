@@ -15,7 +15,7 @@ const getAllProfile = async (req, res) => {
 
     const detailsMap = new Map(details.map(detail => [detail.user_id, detail]));
 
-    const result = users.map(user => {
+    const result = users.map(async user => {
       const detail = detailsMap.get(user.id);
 
       return {
@@ -36,7 +36,7 @@ const getAllProfile = async (req, res) => {
         phone_number: detail?.phone_number || null,
         avatar: detail?.avatar || null,
         contact_info: detail?.contact_info || null,
-
+        rating: await userServices.getRating(user.id) || null,
       };
     });
 
@@ -85,6 +85,7 @@ const getProfile = async (req, res) => {
     phone_number: detail.phone_number,
     avatar: detail?.avatar || null,
     contact_info: detail?.contact_info || null,
+    rating: await userServices.getRating(user.id) || null,
   }
 
   return res.status(200).json(data);

@@ -11,7 +11,7 @@ const ReviewFromEmployer = client.define('review_from_employer', {
   rating: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    validate: { min: 1, max: 5 },
+    validate: { min: 0, max: 5 },
   },
   comment: {
     type: DataTypes.TEXT,

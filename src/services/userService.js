@@ -3,7 +3,35 @@ const { User } = require("../models/user.js");
 const { ContractorDetails } = require("../models/contractorDetails.js");
 const { EmployerDetails } = require("../models/employerDetails")
 const { ApiError } = require("../exceptions/api.error.js");
+const { ReviewFromEmployer } = require("../models/reviewFromEmployer.js");
+const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
 
+const getRating = async (id) => {
+  const user = await User.findOne({ where: { id } });
+
+  if (!user) {
+    throw ApiError.badRequest("User not found");
+  }
+
+  if (user.role === "job_seeker") {
+    const reviews = await ReviewFromEmployer.findAll({ where: { job_seeker_id: id } })
+
+    const rating = await reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+    console.log("Employer rating____________________", rating);
+
+    return rating;
+  }
+
+  if (user.role === "employer") {
+    const reviews = await ReviewFromJobSeeker.findAll({ where: { employer_id: id } })
+
+    const rating = await reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+
+    console.log("Employer rating____________________", rating);
+
+    return rating;
+  }
+}
 
 async function getUser(id) {
   return User.findOne({ where: { id } });
@@ -57,7 +85,7 @@ function validatePassword(password) {
   }
 }
 
-const mergeUserData = (user, detail) => {
+const mergeUserData = async (user, detail) => {
   return {
     user_id: user.id,
     email: user.email,
@@ -77,6 +105,7 @@ const mergeUserData = (user, detail) => {
     contact_info: detail?.contact_info || null,
     rating: detail?.rating || null,
     avatar: detail?.avatar || null,
+    rating: await getRating(user.id) || null,
   }
 }
 
@@ -100,7 +129,8 @@ const saveNewUser = (req, res) => {
 }
 
 
-const userService = {
+
+const userServices = {
   normalize,
   findByEmail,
   getUser,
@@ -111,6 +141,7 @@ const userService = {
   mergeUserData,
   saveNewUser,
   getToken,
+  getRating,
 }
 
-module.exports = userService;
+module.exports = userServices;
