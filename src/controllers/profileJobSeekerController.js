@@ -37,6 +37,8 @@ const getAllProfile = async (req, res) => {
         avatar: detail?.avatar || null,
         contact_info: detail?.contact_info || null,
         rating: await userServices.getRating(user.id) || null,
+        company: detail?.company || null,
+
       };
     });
 
@@ -86,12 +88,13 @@ const getProfile = async (req, res) => {
     avatar: detail?.avatar || null,
     contact_info: detail?.contact_info || null,
     rating: await userServices.getRating(user.id) || null,
+    company: detail?.company || null,
   }
 
   return res.status(200).json(data);
 };
 
-const putProfile = async (req, res) => {
+const patchProfile = async (req, res) => {
   const { refresh_token } = req.cookies;
 
   if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
@@ -123,6 +126,7 @@ const putProfile = async (req, res) => {
     city,
     phone_number,
     contact_info,
+    company,
   } = req.body;
 
   const user = await User.findOne({ where: { id } });
@@ -142,23 +146,24 @@ const putProfile = async (req, res) => {
   }
 
   await user.update({
-    first_name,
-    last_name,
-    email,
-  })
+    ...(first_name !== undefined && { first_name }),
+    ...(last_name !== undefined && { last_name }),
+    ...(email !== undefined && { email }),
+  });
 
   await detail.update({
-    job_category,
-    work_experience,
-    portfolio,
-    section_title,
-    description,
-    country,
-    location,
-    city,
-    phone_number,
-    contact_info,
-  })
+    ...(job_category !== undefined && { job_category }),
+    ...(work_experience !== undefined && { work_experience }),
+    ...(portfolio !== undefined && { portfolio }),
+    ...(section_title !== undefined && { section_title }),
+    ...(description !== undefined && { description }),
+    ...(country !== undefined && { country }),
+    ...(location !== undefined && { location }),
+    ...(city !== undefined && { city }),
+    ...(phone_number !== undefined && { phone_number }),
+    ...(contact_info !== undefined && { contact_info }),
+    ...(company !== undefined && { company }),
+  });
 
   const data = {
     user_id: user.id,
@@ -178,6 +183,7 @@ const putProfile = async (req, res) => {
     phone_number: detail?.phone_number || null,
     avatar: detail?.avatar || null,
     contact_info: detail?.contact_info || null,
+    company: detail?.company || null,
   }
 
   return res.status(200).json(data)
@@ -185,7 +191,7 @@ const putProfile = async (req, res) => {
 
 const profileJobSeekerController = {
   getAllProfile,
-  putProfile,
+  patchProfile,
   getProfile,
 }
 

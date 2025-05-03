@@ -5,7 +5,7 @@ const profileJobSeekerController = require("../controllers/profileJobSeekerContr
 const router = Router();
 
 router.get("/", catchError(profileJobSeekerController.getAllProfile));
-router.put("/:id", catchError(profileJobSeekerController.putProfile));
+router.patch("/:id", catchError(profileJobSeekerController.patchProfile));
 router.get("/:id", catchError(profileJobSeekerController.getProfile));
 
 module.exports = router;

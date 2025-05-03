@@ -93,8 +93,12 @@ const employerDetails = [
     phone_number: '+380631234567',
     team_size: '50-100',
     clients: ['TechCorp', 'WebSolutions', 'Innovators Inc.'],  // Масив клієнтів
-    contact_info: ['contact@techsolutions.com'],  // Масив контактної інформації
     rating: '4.8',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
     avatar: '/uploads/avatars/1.jpg',
   },
   {
@@ -108,8 +112,12 @@ const employerDetails = [
     phone_number: '+380671234567',
     team_size: '10-20',
     clients: ['Brandify', 'DesignLab', 'CreativeWorks'],
-    contact_info: ['info@creativestudios.com'],
     rating: '4.5',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
     avatar: '/uploads/avatars/3.jpg',
   },
   {
@@ -123,8 +131,12 @@ const employerDetails = [
     phone_number: '+380681234567',
     team_size: '200+',
     clients: ['InnovateNow', 'TechPartners', 'FutureTech'],
-    contact_info: ['support@innovatetech.com'],
     rating: '4.9',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
     avatar: '/uploads/avatars/5.jpg',
   },
   {
@@ -138,8 +150,12 @@ const employerDetails = [
     phone_number: '+380631234568',
     team_size: '500+',
     clients: ['GlobalCorp', 'MegaIndustries'],
-    contact_info: ['consult@globalenterprise.com'],
     rating: '5.0',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
     avatar: '/uploads/avatars/7.jpg',
   },
 ];
@@ -157,6 +173,12 @@ const contractorDetails = [
     country: 'Ukraine',
     city: 'Kyiv',
     phone_number: '+380631234569',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
+
   },
   {
     user_id: 4,
@@ -169,6 +191,12 @@ const contractorDetails = [
     country: 'Ukraine',
     city: 'Lviv',
     phone_number: '+380671234568',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
+
   },
   {
     user_id: 6,
@@ -181,6 +209,12 @@ const contractorDetails = [
     country: 'Ukraine',
     city: 'Odesa',
     phone_number: '+380681234568',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
+
   },
   {
     user_id: 8,
@@ -193,6 +227,11 @@ const contractorDetails = [
     country: 'Ukraine',
     city: 'Kyiv',
     phone_number: '+380631234570',
+    contact_info: [
+      "https://www.facebook.com/your-profile",
+      "https://www.linkedin.com/in/your-profile",
+      "https://www.instagram.com/your-profile"
+    ],
   },
 ];
 

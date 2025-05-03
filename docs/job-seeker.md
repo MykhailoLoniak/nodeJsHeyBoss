@@ -31,6 +31,7 @@
     "description": string,
     "country": string,
     "location": string,
+    "company": string,
     "city": string,
     "phone_number": string,
     "avatar": string,
@@ -70,6 +71,7 @@
     "phone_number": string,
     "avatar": string,
     "contact_info": array,
+    "company": string,
   }
 ```
 
@@ -77,7 +79,7 @@
 
 ### 3. Оновити профіль шукача роботи
 
-**PUT /api/auth/profile-job-seeker/:id**
+**PATCH /api/auth/profile-job-seeker/:id**
 
 Опис  
 Оновлює поля профілю користувача.
@@ -99,6 +101,7 @@
   "city": STRING,
   "phone_number": STRING,
   "contact_info": array,
+  "company": string,
 }
 ```
 
@@ -121,5 +124,6 @@
   "city": string,
   "phone_number": string,
   "avatar": string,
+  "company": string,
 }
 ```

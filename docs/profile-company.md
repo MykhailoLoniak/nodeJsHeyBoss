@@ -10,7 +10,7 @@
 
 ### 1. Отримання всі профілі компаній
 
-**GET /api/auth/profile-company/**
+**PATCH /api/auth/profile-company/**
 
 #### Опис
 

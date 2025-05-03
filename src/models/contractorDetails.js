@@ -41,6 +41,9 @@ const ContractorDetails = client.define(
     location: {
       type: DataTypes.STRING,
     },
+    company: {
+      type: DataTypes.STRING,
+    },
     country: {
       type: DataTypes.STRING,
     },

@@ -8,6 +8,6 @@ const router = Router();
 
 router.get("/", catchError(profileController.getAllProfile));
 router.get("/:id", catchError(profileController.getProfile));
-router.put("/:id", catchError(profileController.putProfile));
+router.patch("/:id", catchError(profileController.patchProfile));
 
 module.exports = router;
