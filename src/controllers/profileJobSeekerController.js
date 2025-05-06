@@ -3,6 +3,7 @@ const { jwtService } = require("../services/jwtService");
 const userServices = require("../services/userService");
 const { User } = require("../models/user");
 const { ContractorDetails } = require("../models/contractorDetails");
+const { Project } = require("../models/project");
 
 const getAllProfile = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ const getAllProfile = async (req, res) => {
 
     const detailsMap = new Map(details.map(detail => [detail.user_id, detail]));
 
-    const result = users.map(async user => {
+    const result = await Promise.all(users.map(async user => {
       const detail = detailsMap.get(user.id);
 
       return {
@@ -40,7 +41,7 @@ const getAllProfile = async (req, res) => {
         company: detail?.company || null,
 
       };
-    });
+    }));
 
     return res.status(200).json(result);
 
@@ -189,10 +190,108 @@ const patchProfile = async (req, res) => {
   return res.status(200).json(data)
 }
 
+const getProjects = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findOne({ where: { id } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role === "employer") {
+      return res.status(403).json({ message: "User is not a job seeker" });
+    }
+
+    const projects = await Project.findAll({ where: { contractor_id: id } });
+
+    return res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch projects", error });
+  }
+};
+
+const patchProjects = async (req, res) => {
+  const { id, projectId } = req.params;
+  const { title, description } = req.body;
+  const portfolioFiles = req.files?.portfolio || [];
+
+  const mediaUrls = portfolioFiles.map(f => `/uploads/portfolios/${f.filename}`);
+
+  try {
+    const { refresh_token } = req.cookies;
+    if (!refresh_token) throw ApiError.unauthorized();
+
+    const user = await jwtService.verifyRefresh(refresh_token);
+    if (!user) throw ApiError.unauthorized();
+
+    if (user.id !== +id) throw ApiError.forbidden("You are not authorized to edit this profile");
+    if (user.role === "employer") throw ApiError.badRequest("User is not a job seeker");
+
+    const project = await Project.findOne({ where: { id: projectId, contractor_id: id } });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    await project.update({
+      ...(title && { title }),
+      ...(description && { description }),
+      ...(mediaUrls.length > 0 && { media: mediaUrls }),
+    });
+
+    return res.status(200).json(project);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update project", error });
+  }
+};
+
+const postProjects = async (req, res) => {
+  const id = req.params.id;
+  const { title, description } = req.body
+  const portfolioFiles = req.files.portfolio || [];
+
+  const mediaUrls = portfolioFiles.map(f => `/uploads/portfolios/${f.filename}`);
+
+  try {
+    const { refresh_token } = req.cookies;
+    if (!refresh_token) throw ApiError.unauthorized();
+
+    const user = await jwtService.verifyRefresh(refresh_token);
+    if (!user) throw ApiError.unauthorized();
+
+    if (user.id !== +id) throw ApiError.forbidden("You are not authorized to edit this profile");
+
+    if (user.role === "employer") {
+      throw ApiError.badRequest('User is not a job seeker');
+    }
+
+    const projekt = await Project.create({
+      contractor_id: id,
+      title,
+      description,
+      media: mediaUrls,
+    })
+
+    res.status(200).json(projekt);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to create project",
+      error,
+    });
+  }
+}
+
+
 const profileJobSeekerController = {
   getAllProfile,
   patchProfile,
   getProfile,
+
+  getProjects,
+  patchProjects,
+  postProjects,
 }
 
 module.exports = profileJobSeekerController;

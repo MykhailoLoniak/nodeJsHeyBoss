@@ -2,7 +2,7 @@ require("dotenv").config();
 const { Router } = require("express");
 const { catchError } = require("../utils/catchError");
 const avatarController = require("../controllers/avatarController");
-const avatarMiddleware = require("../middlewares/avatarMiddleware");
+const avatarMiddleware = require("../middlewares/uploadsMiddleware");
 
 const router = Router();
 

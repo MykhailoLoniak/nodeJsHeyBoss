@@ -9,26 +9,12 @@ const { EmployerDetails } = require('./employerDetails');
 const { ContractorDetails } = require('./contractorDetails');
 const { ReviewFromJobSeeker } = require('./reviewFromJobSeeker');
 const { ReviewFromEmployer } = require('./reviewFromEmployer');
+const { Project } = require('./project')
 // const { JobExecutors } = require('./jobExecutors');
 
-
-// User.hasMany(Job, { foreignKey: 'user_id' });
-// Job.belongsTo(User, { foreignKey: 'user_id' });
-
-
-// User.hasMany(UserChatRoom, { foreignKey: 'user_id' });
-// ChatRoom.hasMany(UserChatRoom, { foreignKey: 'chat_room_id' });
-
-// User.hasOne(EmployerDetails, { foreignKey: 'user_id' });
-// User.hasOne(ContractorDetails, { foreignKey: 'user_id' });
-
-// Хто залишив відгук — пошукач
 ReviewFromJobSeeker.belongsTo(User, { as: 'jobSeeker', foreignKey: 'job_seeker_id' });
-// Кому залишили відгук — роботодавець
 ReviewFromJobSeeker.belongsTo(User, { as: 'employer', foreignKey: 'employer_id' });
-// На яку роботу
 ReviewFromJobSeeker.belongsTo(Job, { foreignKey: 'job_id' });
-
 
 ReviewFromEmployer.belongsTo(User, { as: 'employer', foreignKey: 'employer_id' }); // Хто залишає відгук
 ReviewFromEmployer.belongsTo(User, { as: 'jobSeeker', foreignKey: 'job_seeker_id' }); // Кому залишено відгук
@@ -44,8 +30,9 @@ Job.belongsTo(User, { foreignKey: "company_id" });
 Token.belongsTo(User, { foreignKey: 'userId' });
 User.hasOne(Token, { foreignKey: 'userId' });
 
+ContractorDetails.hasMany(Project, { foreignKey: 'contractor_id' });
+Project.belongsTo(ContractorDetails, { foreignKey: 'contractor_id' });
 
-// Експортуємо всі моделі + клієнт
 module.exports = {
   client,
   User,
@@ -58,4 +45,5 @@ module.exports = {
   ContractorDetails,
   ReviewFromJobSeeker,
   ReviewFromEmployer,
+
 };

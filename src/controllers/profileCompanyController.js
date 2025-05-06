@@ -16,7 +16,7 @@ const getAllProfile = async (req, res) => {
 
   const detailsMap = new Map(details.map(detail => [detail.user_id, detail]));
 
-  const result = users.map(async user => {
+  const result = await Promise.all(users.map(async user => {
     const detail = detailsMap.get(user.id);
     const rating = await userServices.getRating(user.id);
 
@@ -41,7 +41,7 @@ const getAllProfile = async (req, res) => {
       avatar: detail?.avatar || null,
       rating: rating || null,
     };
-  });
+  }));
 
   return res.status(200).json(result);
 };
@@ -55,7 +55,7 @@ const getProfile = async (req, res) => {
 
   const detail = await userServices.findByIdDetail(+user.id, user.role);
 
-  const data = userServices.mergeUserData(user, detail);
+  const data = await userServices.mergeUserData(user, detail);
 
   return res.status(200).json(data);
 };
@@ -94,7 +94,7 @@ const patchProfile = async (req, res) => {
   const userRecord = await User.findByPk(id);
   if (!userRecord) throw ApiError.notFound("User not found");
 
-  // Оновлення тільки переданих полів
+
   await userRecord.update({
     ...(first_name !== undefined && { first_name }),
     ...(last_name !== undefined && { last_name }),

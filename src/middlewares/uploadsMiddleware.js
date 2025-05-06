@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
 
-    const id = req.params.id || Date.now(); 
+    const id = req.params.id || Date.now();
     const ext = path.extname(file.originalname);
     cb(null, `${id}-${Date.now()}${ext}`);
   }
@@ -26,7 +26,7 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Тільки файли типу jpg, jpeg, png дозволені"));
+      return cb(new Error("Тількіи файли типу jpg, jpeg, png дозволені"));
     }
     cb(null, true);
   },
