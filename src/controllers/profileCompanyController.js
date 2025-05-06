@@ -37,8 +37,9 @@ const getAllProfile = async (req, res) => {
       team_size: detail?.team_size || null,
       clients: detail?.clients || null,
       contact_info: detail?.contact_info || null,
-      rating: detail?.rating || null,
+      // rating: detail?.rating || null,
       avatar: detail?.avatar || null,
+      rating: rating || null,
     };
   }));
 
@@ -84,7 +85,6 @@ const patchProfile = async (req, res) => {
     team_size,
     clients,
     contact_info,
-    rating,
   } = req.body;
 
   const detail = await EmployerDetails.findOne({ where: { user_id: id } });

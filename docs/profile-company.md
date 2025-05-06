@@ -36,7 +36,6 @@
     "team_size": string,
     "clients": array,
     "contact_info": array,
-    "rating": string,
     "avatar": string
   }, ...
 ]

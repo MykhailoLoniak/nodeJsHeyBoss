@@ -9,6 +9,9 @@ const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
 const getRating = async (id) => {
   const user = await User.findOne({ where: { id } });
 
+  console.log("id_______________________________-", id);
+
+
   if (!user) {
     throw ApiError.badRequest("User not found");
   }

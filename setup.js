@@ -18,7 +18,7 @@ async function setup() {
   try {
     console.log('Моделі:', Object.keys(models.client.models));
 
-    await client.sync({ alter: true });
+    await client.sync({ force: true });
     console.log('📦 База даних синхронізована.');
 
     // Створення початкових користувачів
