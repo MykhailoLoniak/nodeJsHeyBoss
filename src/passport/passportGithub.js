@@ -33,7 +33,6 @@ passport.use(
       scope: ["user:email"],
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log("GitHub profile:", profile);
       try {
         let email = profile.emails?.[0]?.value || await getGitHubEmail(accessToken);
 

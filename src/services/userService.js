@@ -9,7 +9,6 @@ const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
 const getRating = async (id) => {
   const user = await User.findOne({ where: { id } });
 
-  console.log("id_______________________________-", id);
 
 
   if (!user) {
@@ -20,7 +19,6 @@ const getRating = async (id) => {
     const reviews = await ReviewFromEmployer.findAll({ where: { job_seeker_id: id } })
 
     const rating = await reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-    console.log("Employer rating____________________", rating);
 
     return rating;
   }
@@ -30,7 +28,6 @@ const getRating = async (id) => {
 
     const rating = await reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
 
-    console.log("Employer rating____________________", rating);
 
     return rating;
   }
@@ -53,7 +50,6 @@ const getUserToken = async (user_id) => {
 };
 
 const findByIdDetail = async (user_id, role) => {
-  console.log("Employer details not found for user role_________________:", role);
   if (role === "job_seeker") {
     const detail = await ContractorDetails.findOne({ where: { user_id } });
 

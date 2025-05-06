@@ -6,10 +6,7 @@ async function save(userId, newToken) {
   // try {
   const user = await User.findByPk(userId);
   if (!user) {
-    console.log("Користувач НЕ існує");
   }
-
-  console.log("Користувач існує");
 
   try {
     const existingToken = await Token.findOne({ where: { user_id: userId } });
@@ -19,11 +16,9 @@ async function save(userId, newToken) {
         user_id: userId,
         refresh_token: newToken,
       });
-      console.log("Токен створено", createdToken);
     } else {
       existingToken.refresh_token = newToken;
       await existingToken.save();
-      console.log("Токен оновлено", existingToken);
     }
   } catch (err) {
     console.error("Помилка при створенні або оновленні токена:", err);

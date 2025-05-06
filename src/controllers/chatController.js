@@ -202,9 +202,6 @@ const updateChatRoom = async (req, res) => {
 const searchUsers = async (req, res) => {
   const { qwer } = req.params;
 
-  console.log('............................', qwer);
-
-
   const users = await User.findAll({
     where: {
       [Op.or]: [
@@ -213,11 +210,9 @@ const searchUsers = async (req, res) => {
       ]
     }
   });
-  console.log('users', users);
 
   const arrUsers = users.map(user => [`${user.firstName} ${user.lastName}`, user.id]);
 
-  console.log(arrUsers);
   res.status(200).json(arrUsers)
 }
 
