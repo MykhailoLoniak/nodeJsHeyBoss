@@ -39,7 +39,6 @@ const getAllProfile = async (req, res) => {
       contact_info: detail?.contact_info || null,
       rating: detail?.rating || null,
       avatar: detail?.avatar || null,
-      rating: rating || null,
     };
   }));
 
