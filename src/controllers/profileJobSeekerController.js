@@ -4,6 +4,8 @@ const userServices = require("../services/userService");
 const { User } = require("../models/user");
 const { ContractorDetails } = require("../models/contractorDetails");
 const { Project } = require("../models/project");
+require('dotenv').config();
+
 
 const getAllProfile = async (req, res) => {
   try {
@@ -206,7 +208,18 @@ const getProjects = async (req, res) => {
 
     const projects = await Project.findAll({ where: { contractor_id: id } });
 
-    return res.status(200).json(projects);
+    const data = projects.map(project => ({
+      // ...project.toJSON(),
+      projekt_id: project.id,
+      user_id: project.contractor_id,
+      title: project.title,
+      description: project.description,
+      media: project.media.map(url => `${process.env.BACKEND_ORIGIN}${url}`),
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    }))
+
+    return res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch projects", error });
   }
@@ -249,6 +262,7 @@ const patchProjects = async (req, res) => {
 
 const postProjects = async (req, res) => {
   const id = req.params.id;
+
   const { title, description } = req.body
   const portfolioFiles = req.files.portfolio || [];
 

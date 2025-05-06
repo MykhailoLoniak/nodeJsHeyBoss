@@ -2,6 +2,8 @@ const { ApiError } = require("../exceptions/api.error");
 const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails");
 const { jwtService } = require("../services/jwtService");
+require('dotenv').config();
+
 
 // const uploadAvatar = async (req, res) => {
 //   const id = req.params.id;

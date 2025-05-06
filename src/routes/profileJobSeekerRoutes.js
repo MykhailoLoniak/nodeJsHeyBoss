@@ -9,9 +9,9 @@ router.get("/", catchError(profileJobSeekerController.getAllProfile));
 router.patch("/:id", catchError(profileJobSeekerController.patchProfile));
 router.get("/:id", catchError(profileJobSeekerController.getProfile));
 
-router.get('/project', uploadMiddleware, catchError(profileJobSeekerController.getProject))
-router.patch('/project', uploadMiddleware, catchError(profileJobSeekerController.patchProject))
-router.post('/project/:id', uploadMiddleware ,catchError(profileJobSeekerController.postProject))
+router.get('/project/:id', uploadMiddleware, catchError(profileJobSeekerController.getProjects))
+router.patch('/project/:id/:projectId', uploadMiddleware, catchError(profileJobSeekerController.patchProjects))
+router.post('/project/:id', uploadMiddleware, catchError(profileJobSeekerController.postProjects))
 
 
 module.exports = router;

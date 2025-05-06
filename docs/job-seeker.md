@@ -127,3 +127,94 @@
   "company": string,
 }
 ```
+
+### 4. Отримати список проєктів користувача
+
+**GET /api/auth/profile-job-seeker/project/:id**
+
+#### Опис
+
+Повертає всі проєкти, що належать користувачу з вказаним `id`.
+
+#### Вхідні параметри:
+
+- `id` (integer) – ID користувача (job_seeker)
+
+#### Відповідь (200 OK):
+
+```json
+[
+  {
+    "id": 1,
+    "contractor_id": 5,
+    "title": "Проєкт 1",
+    "description": "Опис проєкту",
+    "media": ["https://example.com/image1.jpg"]
+  },
+  {
+    "id": 2,
+    "contractor_id": 5,
+    "title": "Проєкт 2",
+    "description": "Ще один опис",
+    "media": []
+  }
+]
+```
+
+### 5. Створити новий проєкт
+
+**POST /api/auth/profile-job-seeker/project/:id**
+
+#### Опис
+
+Додає новий проєкт до профілю job_seeker користувача з вказаним `id`.
+
+#### Обов’язкові поля:
+
+- `title` (string) – назва проєкту
+
+#### Опціональні поля:
+
+- `description` (string) – опис проєкту
+- `media` (array of strings) – список URL до зображень або медіа-файлів
+
+#### Відповідь (201 Created):
+
+```json
+{
+  "id": 3,
+  "contractor_id": 5,
+  "title": "Новий проєкт",
+  "description": "Деталі проєкту",
+  "media": []
+}
+```
+
+### 6. Оновити існуючий проєкт
+
+**PATCH /api/auth/profile-job-seeker/project/:id/:projectId**
+
+#### Опис
+
+Оновлює існуючий проєкт із `projectId` у користувача з `id`.
+
+#### Вхідні параметри:
+
+- `id` (integer) – ID користувача
+- `projectId` (integer) – ID проєкту
+
+#### Опціональні поля:
+
+- `title` (string) – нова назва проєкту
+- `description` (string) – новий опис
+- `media` (array of strings) – оновлений список медіа
+
+#### Відповідь (200 OK):
+
+```json
+{
+  "title": string,
+  "description": string,
+  "media": array,
+}
+```
