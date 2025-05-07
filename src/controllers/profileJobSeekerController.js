@@ -37,7 +37,7 @@ const getAllProfile = async (req, res) => {
         location: detail?.location || null,
         city: detail?.city || null,
         phone_number: detail?.phone_number || null,
-        avatar: dataUrls(detail?.avatar) || "/defaultAvatar.png",
+        avatar: dataUrls(detail?.avatar),
         contact_info: detail?.contact_info || null,
         rating: await userServices.getRating(user.id) || null,
         company: detail?.company || null,
@@ -91,7 +91,7 @@ const getProfile = async (req, res) => {
     location: detail.location || null,
     city: detail.city || null,
     phone_number: detail.phone_number,
-    avatar: dataUrls(detail?.avatar) || "/defaultAvatar.png",
+    avatar: dataUrls(detail?.avatar),
     contact_info: detail?.contact_info || null,
     rating: await userServices.getRating(user.id) || null,
     company: detail?.company || null,
@@ -189,7 +189,7 @@ const patchProfile = async (req, res) => {
     location: detail?.location || null,
     city: detail?.city || null,
     phone_number: detail?.phone_number || null,
-    avatar: dataUrls(detail?.avatar) || "/defaultAvatar.png",
+    avatar: dataUrls(detail?.avatar),
     contact_info: detail?.contact_info || null,
     company: detail?.company || null,
   }
@@ -197,13 +197,17 @@ const patchProfile = async (req, res) => {
   return res.status(200).json(data)
 }
 
-function dataUrls(urls = "/defaultAvatar.png") {
+function dataUrls(urls) {
+  const defaultPath = "/uploads/avatars/defaultAvatar.png";
+
   if (typeof urls === "string") {
     return `${process.env.BACKEND_ORIGIN}${urls}`
   }
   if (Array.isArray(urls)) {
     return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
   }
+
+  return `${process.env.BACKEND_ORIGIN}${defaultPath}`;
 }
 
 const getProjects = async (req, res) => {
