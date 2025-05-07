@@ -2,6 +2,7 @@ const { ApiError } = require("../exceptions/api.error");
 const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails");
 const { jwtService } = require("../services/jwtService");
+const { deleteImage } = require("../utils/fs");
 require('dotenv').config();
 
 
@@ -66,7 +67,7 @@ const uploadAvatar = async (req, res) => {
 
   try {
     const detail = await detailModel.findOne({ where: { user_id: id } });
-    console.log("-----------------------------", detail);
+    // console.log("-----------------------------", detail);
     if (!detail) {
       return res.status(404).json({ message: "User details not found" });
     }
@@ -131,8 +132,13 @@ const deleteAvatar = async (req, res) => {
 
     const urlImg = detail.avatar;
 
+    console.log("urlImg_______________________:", urlImg);
+
+
     const urlImgArr = urlImg?.split("/");
+    console.log("urlImgArr_______________________:", urlImgArr);
     const url = urlImgArr[urlImgArr.length - 1]
+    console.log("url_______________________:", url);
 
     await detail.update(
       { avatar: null },
