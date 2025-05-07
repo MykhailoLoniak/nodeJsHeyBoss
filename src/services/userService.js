@@ -103,7 +103,7 @@ const mergeUserData = async (user, detail) => {
     clients: detail?.clients || null,
     contact_info: detail?.contact_info || null,
     rating: detail?.rating || null,
-    avatar: detail?.avatar || null,
+    avatar: dataUrl(detail?.avatar) || null,
     rating: await getRating(user.id) || null,
   }
 }
@@ -127,6 +127,9 @@ const saveNewUser = (req, res) => {
   return res.redirect(redirectUrl);
 }
 
+function dataUrl(url) {
+  return `${process.env.BACKEND_ORIGIN}${urls}`
+}
 
 
 const userServices = {
@@ -141,6 +144,7 @@ const userServices = {
   saveNewUser,
   getToken,
   getRating,
+  dataUrl,
 }
 
 module.exports = userServices;

@@ -4,8 +4,6 @@ const userServices = require("../services/userService");
 const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
 
-
-
 const getAllProfile = async (req, res) => {
   const users = await User.findAll({ where: { role: "employer" } });
   const userIds = users.map(user => user.id);
@@ -38,7 +36,7 @@ const getAllProfile = async (req, res) => {
       clients: detail?.clients || null,
       contact_info: detail?.contact_info || null,
       // rating: detail?.rating || null,
-      avatar: detail?.avatar || null,
+      avatar: userServices.dataUrl(detail?.avatar) || null,
       rating: rating || null,
     };
   }));
