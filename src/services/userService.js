@@ -5,11 +5,10 @@ const { EmployerDetails } = require("../models/employerDetails")
 const { ApiError } = require("../exceptions/api.error.js");
 const { ReviewFromEmployer } = require("../models/reviewFromEmployer.js");
 const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
+require('dotenv').config();
 
 const getRating = async (id) => {
   const user = await User.findOne({ where: { id } });
-
-
 
   if (!user) {
     throw ApiError.badRequest("User not found");
@@ -128,7 +127,7 @@ const saveNewUser = (req, res) => {
 }
 
 function dataUrl(url) {
-  return `${process.env.BACKEND_ORIGIN}${urls}`
+  return `${process.env.BACKEND_ORIGIN}${url}`
 }
 
 

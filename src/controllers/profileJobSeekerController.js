@@ -56,17 +56,20 @@ const getAllProfile = async (req, res) => {
 const getProfile = async (req, res) => {
   const { id } = req.params;
 
+  console.log(":::::::::::::::::::::", id);
+
   const user = await userServices.getUser(+id);
 
   if (!user) {
     throw ApiError.badRequest("No such user");
   }
+  console.log(":::::::::::::::::::::", user.role);
 
   if (user.role === "employer") {
     throw ApiError.forbidden("No job seeker details found");
   }
 
-  const detail = await ContractorDetails.findOne({ where: { user_id: id } });
+  const detail = await ContractorDetails.findOne({ where: { user_id: +id } });
 
   if (!detail) {
     throw ApiError.forbidden("No job seeker details found");
@@ -142,7 +145,9 @@ const patchProfile = async (req, res) => {
     throw ApiError.forbidden("You are not authorized to edit this profile");
   }
 
-  const detail = await ContractorDetails.findOne({ where: { user_id: id } });
+
+
+  const detail = await ContractorDetails.findOne({ where: { user_id: +id } });
 
   if (!detail) {
     throw ApiError.forbidden("No job seeker details found");
