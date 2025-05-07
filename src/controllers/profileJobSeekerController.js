@@ -197,7 +197,7 @@ const patchProfile = async (req, res) => {
   return res.status(200).json(data)
 }
 
-function dataUrls(urls) {
+function dataUrls(urls = "/defaultAvatar.png") {
   if (typeof urls === "string") {
     return `${process.env.BACKEND_ORIGIN}${urls}`
   }

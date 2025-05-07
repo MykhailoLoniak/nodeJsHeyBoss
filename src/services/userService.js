@@ -126,7 +126,7 @@ const saveNewUser = (req, res) => {
   return res.redirect(redirectUrl);
 }
 
-function dataUrl(url) {
+function dataUrl(url = "/defaultAvatar.png") {
   return `${process.env.BACKEND_ORIGIN}${url}`
 }
 
