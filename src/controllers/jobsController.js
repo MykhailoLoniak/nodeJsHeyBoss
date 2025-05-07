@@ -24,7 +24,7 @@ const getJobs = async (req, res) => {
     if (!id) throw ApiError.badRequest('ID parameter is required')
 
     const jobs = await Job.findAll({ where: { company_id: id } });
-    if (!id) throw ApiError.badRequest('No job with this ID found')
+    if (!jobs) throw ApiError.badRequest('No job with this ID found')
 
     return res.status(200).json(jobs);
   } catch (error) {
@@ -46,7 +46,7 @@ const filterJobs = async (req, res) => {
       full_description,
       application_deadline,
       visibility,
-      status,
+      // status,
       createdAt,
       updatedAt
     } = req.query;
@@ -57,7 +57,7 @@ const filterJobs = async (req, res) => {
       job_title,
       location,
       employment_type,
-      status,
+      // status,
       short_summary,
       full_description,
       application_deadline,
@@ -104,7 +104,6 @@ const filterJobs = async (req, res) => {
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 const newJobs = async (req, res, next) => {
   try {
     const {
@@ -112,12 +111,13 @@ const newJobs = async (req, res, next) => {
       job_title,
       location,
       employment_type,
-      salary,
+      min_salary,
+      max_salary,
       short_summary,
       full_description,
       application_deadline,
       visibility,
-      status,
+      // status,
     } = req.body;
 
     if (!company_id || isNaN(Number(company_id))) {
@@ -128,8 +128,22 @@ const newJobs = async (req, res, next) => {
       throw ApiError.badRequest("job_title required and must be a string");
     }
 
-    if (salary !== undefined && isNaN(Number(salary))) {
-      throw ApiError.badRequest("salary must be a number");
+    if (min_salary !== undefined) {
+      if (isNaN(Number(min_salary)) || Number(min_salary) < 0) {
+        throw ApiError.badRequest("min_salary must be a non-negative number");
+      }
+    }
+
+    if (max_salary !== undefined) {
+      if (isNaN(Number(max_salary)) || Number(max_salary) < 0) {
+        throw ApiError.badRequest("max_salary must be a non-negative number");
+      }
+    }
+
+    if (min_salary !== undefined && max_salary !== undefined) {
+      if (Number(min_salary) > Number(max_salary)) {
+        throw ApiError.badRequest("min_salary cannot be greater than max_salary");
+      }
     }
 
     if (application_deadline && !VALID_APPLICATION_DEADLINES.includes(application_deadline)) {
@@ -140,21 +154,22 @@ const newJobs = async (req, res, next) => {
       throw ApiError.badRequest(`visibility must be one of: ${VALID_VISIBILITY.join(', ')}`);
     }
 
-    if (status && !VALID_STATUS.includes(status)) {
-      throw ApiError.badRequest(`status must be one of: ${VALID_STATUS.join(', ')}`);
-    }
+    // if (status && !VALID_STATUS.includes(status)) {
+    //   throw ApiError.badRequest(`status must be one of: ${VALID_STATUS.join(', ')}`);
+    // }
 
     const job = await Job.create({
       company_id: Number(company_id),
       job_title,
       location,
       employment_type,
-      salary: salary !== undefined ? Number(salary) : null,
+      min_salary: min_salary !== undefined ? Number(min_salary) : null,
+      max_salary: max_salary !== undefined ? Number(max_salary) : null,
       short_summary,
       full_description,
       application_deadline,
       visibility,
-      status,
+      // status,
     });
 
     return res.status(201).json(job);
@@ -164,12 +179,13 @@ const newJobs = async (req, res, next) => {
   }
 };
 
-const putJob = async (req, res, next) => {
+
+const patchJob = async (req, res) => {
   try {
     const { id } = req.params;
 
     if (!id || isNaN(Number(id))) {
-      throw ApiError.badRequest("Invalid job ID");
+      return res.status(400).json({ message: "Invalid job ID" });
     }
 
     const {
@@ -177,62 +193,83 @@ const putJob = async (req, res, next) => {
       job_title,
       location,
       employment_type,
-      salary,
       short_summary,
       full_description,
       application_deadline,
       visibility,
-      status,
+      min_salary,
+      max_salary,
     } = req.body;
 
-    if (company_id !== undefined && isNaN(Number(company_id))) {
-      throw ApiError.badRequest("company_id must be a number");
+    const updates = {};
+
+    if (company_id !== undefined) {
+      if (isNaN(Number(company_id))) {
+        return res.status(400).json({ message: "company_id must be a number" });
+      }
+      updates.company_id = Number(company_id);
     }
 
-    if (salary !== undefined && isNaN(Number(salary))) {
-      throw ApiError.badRequest("salary must be a number");
+    if (job_title !== undefined) updates.job_title = job_title;
+    if (location !== undefined) updates.location = location;
+    if (employment_type !== undefined) updates.employment_type = employment_type;
+    if (short_summary !== undefined) updates.short_summary = short_summary;
+    if (full_description !== undefined) updates.full_description = full_description;
+
+    if (application_deadline !== undefined) {
+      if (!VALID_APPLICATION_DEADLINES.includes(application_deadline)) {
+        return res.status(400).json({
+          message: `application_deadline must be one of: ${VALID_APPLICATION_DEADLINES.join(', ')}`
+        });
+      }
+      updates.application_deadline = application_deadline;
     }
 
-    if (application_deadline && !VALID_APPLICATION_DEADLINES.includes(application_deadline)) {
-      throw ApiError.badRequest(`application_deadline must be one of: ${VALID_APPLICATION_DEADLINES.join(', ')}`);
+    if (visibility !== undefined) {
+      if (!VALID_VISIBILITY.includes(visibility)) {
+        return res.status(400).json({
+          message: `visibility must be one of: ${VALID_VISIBILITY.join(', ')}`
+        });
+      }
+      updates.visibility = visibility;
     }
 
-    if (visibility && !VALID_VISIBILITY.includes(visibility)) {
-      throw ApiError.badRequest(`visibility must be one of: ${VALID_VISIBILITY.join(', ')}`);
+    if (min_salary !== undefined) {
+      if (isNaN(Number(min_salary)) || Number(min_salary) < 0) {
+        return res.status(400).json({ message: "min_salary must be a non-negative number" });
+      }
+      updates.min_salary = Number(min_salary);
     }
 
-    if (status && !VALID_STATUS.includes(status)) {
-      throw ApiError.badRequest(`status must be one of: ${VALID_STATUS.join(', ')}`);
+    if (max_salary !== undefined) {
+      if (isNaN(Number(max_salary)) || Number(max_salary) < 0) {
+        return res.status(400).json({ message: "max_salary must be a non-negative number" });
+      }
+      updates.max_salary = Number(max_salary);
     }
 
-    const [updatedCount] = await Job.update(
-      {
-        company_id,
-        job_title,
-        location,
-        employment_type,
-        salary,
-        short_summary,
-        full_description,
-        application_deadline,
-        visibility,
-        status
-      },
-      { where: { id } }
-    );
+    if (updates.min_salary !== undefined && updates.max_salary !== undefined) {
+      if (updates.min_salary > updates.max_salary) {
+        return res.status(400).json({ message: "min_salary cannot be greater than max_salary" });
+      }
+    }
+
+    const [updatedCount] = await Job.update(updates, { where: { id } });
 
     if (updatedCount === 0) {
       return res.status(404).json({ message: "No job found or nothing updated" });
     }
 
     const updatedJob = await Job.findByPk(id);
+    return res.status(200).json({ message: "Updated successfully", job: updatedJob });
 
-    res.status(200).json({ message: "Updated successfully", job: updatedJob });
   } catch (error) {
-    console.error("Create job error:", error);
+    console.error("Error updating job:", error);
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
 
 const deleteJob = async (req, res) => {
   try {
@@ -246,9 +283,11 @@ const deleteJob = async (req, res) => {
     }
 
     const { id } = req.params;
-    const job = Job.findOne({ where: { id } })
+    const job = await Job.findOne({ where: { id } });
+
+    if (!job) throw ApiError.notFound("Job not found");
     if (+userData.id !== +job.company_id) {
-      throw ApiError.forbidden("You are not authorized to edit this profile");
+      throw ApiError.forbidden("You are not authorized to delete this job");
     }
 
     await Job.destroy({
@@ -257,7 +296,7 @@ const deleteJob = async (req, res) => {
 
     res.status(200).json({ message: "Job deleted" })
   } catch (error) {
-    console.error("Create job error:", error);
+    console.error("Delete job error:", error);
     return res.status(500).json({ message: "Server error", error: error.message });
   }
 }
@@ -267,7 +306,7 @@ const jobsController = {
   getJobs,
   filterJobs,
   newJobs,
-  putJob,
+  patchJob,
   deleteJob
 }
 

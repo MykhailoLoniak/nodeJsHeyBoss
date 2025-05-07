@@ -24,12 +24,12 @@
     "job_title": string,
     "location": string,
     "employment_type": string,
-    "salary": integer,
+    "min_salary": integer,
+    "max_salary": integer,
     "short_summary": string,
     "full_description": string,
     "application_deadline": string ('via platform inbox', 'external link', 'by email'),
     "visibility": string ('public', 'private', 'internal'),
-    "status": string ('active', 'closed', 'draft'),
     "createdAt": string,
     "updatedAt": string
   },
@@ -56,12 +56,12 @@
     "job_title": string,
     "location": string,
     "employment_type": string,
-    "salary": integer,
+    "min_salary": integer,
+    "max_salary": integer,
     "short_summary": string,
     "full_description": string,
     "application_deadline": string ('via platform inbox', 'external link', 'by email'),
     "visibility": string ('public', 'private', 'internal'),
-    "status": string ('active', 'closed', 'draft'),
     "createdAt": string,
     "updatedAt": string
   }
@@ -71,25 +71,26 @@
 
 ### 3. Оновити вакансію
 
-**PUT /api/auth/jobs/:id**
+**PATCH /api/auth/jobs/:id**
 
 Опис
 Оновлює поля вакансії.
 
 Вхідні параметри (JSON):
+id - вакансії
 
 ```json
 {
-  "company_id": integer,
+  // "company_id": integer,
   "job_title": string,
   "location": string,
   "employment_type": string,
-  "salary": integer,
+  "min_salary": integer,
+  "max_salary": integer,
   "short_summary": string,
   "full_description": string,
   "application_deadline": string ('via platform inbox', 'external link', 'by email'),
   "visibility": string ('public', 'private', 'internal'),
-  "status": string ('active', 'closed', 'draft'),
 }
 ```
 
@@ -100,16 +101,15 @@
   "message":"Updated successfully",
   "job":  {
     "id": string,
-    "company_id": integer,
     "job_title": string,
     "location": string,
     "employment_type": string,
-    "salary": integer,
+    "min_salary": integer,
+    "max_salary": integer,
     "short_summary": string,
     "full_description": string,
     "application_deadline": string ('via platform inbox', 'external link', 'by email'),
     "visibility": string ('public', 'private', 'internal'),
-    "status": string ('active', 'closed', 'draft'),
     "createdAt": string,
     "updatedAt": string
   }
@@ -137,7 +137,6 @@
  - "full_description",
  - "application_deadline": ('via platform inbox', 'external link', 'by email'),
  - "visibility": ('public', 'private', 'internal'),
- - "status": ('active', 'closed', 'draft'),
  - "createdAt",
  - "updatedAt"
 ```

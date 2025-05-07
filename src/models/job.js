@@ -28,7 +28,10 @@ const Job = client.define(
     employment_type: {
       type: DataTypes.STRING,
     },
-    salary: {
+    min_salary: {
+      type: DataTypes.INTEGER,
+    },
+    max_salary: {
       type: DataTypes.INTEGER,
     },
     short_summary: {
@@ -43,10 +46,10 @@ const Job = client.define(
     visibility: {
       type: DataTypes.ENUM('public', 'private', 'internal'),
     },
-    status: {
-      type: DataTypes.ENUM('active', 'closed', 'draft'),
-      defaultValue: 'draft',
-    },
+    // status: {
+    //   type: DataTypes.ENUM('active', 'closed', 'draft'),
+    //   defaultValue: 'draft',
+    // },
 
   },
   {
