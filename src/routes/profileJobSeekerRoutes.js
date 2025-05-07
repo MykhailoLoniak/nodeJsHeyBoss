@@ -12,6 +12,7 @@ router.get("/:id", catchError(profileJobSeekerController.getProfile));
 router.get('/project/:id', uploadMiddleware, catchError(profileJobSeekerController.getProjects))
 router.patch('/project/:id/:projectId', uploadMiddleware, catchError(profileJobSeekerController.patchProjects))
 router.post('/project/:id', uploadMiddleware, catchError(profileJobSeekerController.postProjects))
+// router.post('/project/img/:id', uploadMiddleware, catchError(profileJobSeekerController.postImgProjects))
 
 
 module.exports = router;

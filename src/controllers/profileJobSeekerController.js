@@ -193,7 +193,12 @@ const patchProfile = async (req, res) => {
 }
 
 function dataUrls(urls) {
-  return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
+  if (typeof urls === "string") {
+    return `${process.env.BACKEND_ORIGIN}${urls}`
+  }
+  if (Array.isArray(urls)) {
+    return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
+  }
 }
 
 const getProjects = async (req, res) => {
@@ -322,6 +327,7 @@ const profileJobSeekerController = {
   getProjects,
   patchProjects,
   postProjects,
+  // postImgProjects,
 }
 
 module.exports = profileJobSeekerController;
