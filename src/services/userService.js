@@ -102,7 +102,7 @@ const mergeUserData = async (user, detail) => {
     clients: detail?.clients || null,
     contact_info: detail?.contact_info || null,
     rating: detail?.rating || null,
-    avatar: dataUrl(detail?.avatar) || null,
+    avatar: dataUrl(detail?.avatar) || "/defaultAvatar.png",
     rating: await getRating(user.id) || null,
   }
 }

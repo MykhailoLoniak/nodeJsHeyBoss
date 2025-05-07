@@ -36,7 +36,7 @@ const getAllProfile = async (req, res) => {
       clients: detail?.clients || null,
       contact_info: detail?.contact_info || null,
       // rating: detail?.rating || null,
-      avatar: userServices.dataUrl(detail?.avatar) || null,
+      avatar: userServices.dataUrl(detail?.avatar) || "/defaultAvatar.png",
       rating: rating || null,
     };
   }));
