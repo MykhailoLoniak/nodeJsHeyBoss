@@ -62,6 +62,10 @@ const patchProfile = async (req, res) => {
   const { id } = req.params;
   const { refresh_token } = req.cookies;
 
+  console.log("________________________________", id);
+  console.log("________________________________", refresh_token);
+
+
   if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
 
   const user = await jwtService.verifyRefresh(refresh_token);
@@ -108,13 +112,13 @@ const patchProfile = async (req, res) => {
     ...(team_size !== undefined && { team_size }),
     ...(clients !== undefined && { clients }),
     ...(contact_info !== undefined && { contact_info }),
-    ...(rating !== undefined && { rating }),
+    // ...(rating !== undefined && { rating }),
   });
 
   const updatedUser = await userRecord.reload();
   const updatedDetail = await detail.reload();
 
-  const data = userServices.mergeUserData(updatedUser, updatedDetail);
+  const data = await userServices.mergeUserData(updatedUser, updatedDetail);
 
   return res.status(200).json({ message: "Profile updated", data });
 };
