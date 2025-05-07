@@ -37,7 +37,7 @@ const getAllProfile = async (req, res) => {
         location: detail?.location || null,
         city: detail?.city || null,
         phone_number: detail?.phone_number || null,
-        avatar: detail?.avatar || null,
+        avatar: dataUrls(detail?.avatar) || null,
         contact_info: detail?.contact_info || null,
         rating: await userServices.getRating(user.id) || null,
         company: detail?.company || null,
@@ -88,7 +88,7 @@ const getProfile = async (req, res) => {
     location: detail.location || null,
     city: detail.city || null,
     phone_number: detail.phone_number,
-    avatar: detail?.avatar || null,
+    avatar: dataUrls(detail?.avatar) || null,
     contact_info: detail?.contact_info || null,
     rating: await userServices.getRating(user.id) || null,
     company: detail?.company || null,
@@ -184,7 +184,7 @@ const patchProfile = async (req, res) => {
     location: detail?.location || null,
     city: detail?.city || null,
     phone_number: detail?.phone_number || null,
-    avatar: detail?.avatar || null,
+    avatar: dataUrls(detail?.avatar) || null,
     contact_info: detail?.contact_info || null,
     company: detail?.company || null,
   }
@@ -192,7 +192,7 @@ const patchProfile = async (req, res) => {
   return res.status(200).json(data)
 }
 
-const dataUrls = (urls) => {
+function dataUrls(urls) {
   return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
 }
 
