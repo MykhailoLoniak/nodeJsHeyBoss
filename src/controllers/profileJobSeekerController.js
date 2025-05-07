@@ -192,6 +192,10 @@ const patchProfile = async (req, res) => {
   return res.status(200).json(data)
 }
 
+const dataUrls = (urls) => {
+  return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
+}
+
 const getProjects = async (req, res) => {
   const { id } = req.params;
 
@@ -214,7 +218,7 @@ const getProjects = async (req, res) => {
       user_id: project.contractor_id,
       title: project.title,
       description: project.description,
-      media: project.media.map(url => `${process.env.BACKEND_ORIGIN}${url}`),
+      media: dataUrls(url) || [],
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     }))
@@ -248,27 +252,38 @@ const patchProjects = async (req, res) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    await project.update({
+    const patch = await project.update({
       ...(title && { title }),
       ...(description && { description }),
       ...(mediaUrls.length > 0 && { media: mediaUrls }),
     });
 
-    return res.status(200).json(project);
+    const data = patch.map(project => ({
+      // ...project.toJSON(),
+      projekt_id: project.id,
+      user_id: project.contractor_id,
+      title: project.title,
+      description: project.description,
+      media: dataUrls(url) || [],
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    }))
+
+    return res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ message: "Failed to update project", error });
   }
 };
 
 const postProjects = async (req, res) => {
-  const id = req.params.id;
-
-  const { title, description } = req.body
-  const portfolioFiles = req.files.portfolio || [];
-
-  const mediaUrls = portfolioFiles.map(f => `/uploads/portfolios/${f.filename}`);
-
   try {
+    const id = req.params.id;
+
+    const { title, description } = req.body
+    const portfolioFiles = req.files.portfolio || [];
+
+    const mediaUrls = portfolioFiles.map(f => `/uploads/portfolios/${f.filename}`);
+
     const { refresh_token } = req.cookies;
     if (!refresh_token) throw ApiError.unauthorized();
 
@@ -280,12 +295,13 @@ const postProjects = async (req, res) => {
     if (user.role === "employer") {
       throw ApiError.badRequest('User is not a job seeker');
     }
+    console.log("_____________________________");
 
     const projekt = await Project.create({
       contractor_id: id,
       title,
       description,
-      media: mediaUrls,
+      media: dataUrls(mediaUrls) || [],
     })
 
     res.status(200).json(projekt);
