@@ -8,7 +8,7 @@ router.get("/", catchError(jobsController.getAllJobs))
 router.post("/", catchError(jobsController.newJobs))
 router.get("/filter-jobs", catchError(jobsController.filterJobs));
 router.get("/:id", catchError(jobsController.getJobs))
-router.patch("/:id", catchError(jobsController.putJob))
+router.patch("/:id", catchError(jobsController.patchJob))
 router.delete("/:id", catchError(jobsController.deleteJob))
 
 module.exports = router;

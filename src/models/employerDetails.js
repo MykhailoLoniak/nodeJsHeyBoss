@@ -50,9 +50,9 @@ const EmployerDetails = client.define(
     contact_info: {
       type: DataTypes.ARRAY(DataTypes.STRING),
     },
-    rating: {
-      type: DataTypes.STRING,
-    },
+    // rating: {
+    //   type: DataTypes.STRING,
+    // },
     avatar: {
       type: DataTypes.STRING,
     },

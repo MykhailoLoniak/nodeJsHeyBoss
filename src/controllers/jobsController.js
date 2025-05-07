@@ -203,12 +203,12 @@ const patchJob = async (req, res) => {
 
     const updates = {};
 
-    if (company_id !== undefined) {
-      if (isNaN(Number(company_id))) {
-        return res.status(400).json({ message: "company_id must be a number" });
-      }
-      updates.company_id = Number(company_id);
-    }
+    // if (company_id !== undefined) {
+    //   if (isNaN(Number(company_id))) {
+    //     return res.status(400).json({ message: "company_id must be a number" });
+    //   }
+    //   updates.company_id = Number(company_id);
+    // }
 
     if (job_title !== undefined) updates.job_title = job_title;
     if (location !== undefined) updates.location = location;
