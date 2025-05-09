@@ -3,6 +3,19 @@ const { ApiError } = require("../exceptions/api.error");
 const userService = require("../services/userService");
 const { ReviewFromEmployer, ReviewFromJobSeeker } = require("../models");
 
+const margeReviews = (user, reviews) => ({
+  user_name: user.user_name,
+  user_avatar: user.user_avatar,
+  job_seeker_id: user.id,
+  comment: reviews.comment,
+  createdAt: reviews.createdAt,
+  employer_id: reviews.employer_id,
+  job_id: reviews.job_id,
+  id: reviews.id,
+  rating: reviews.rating,
+
+})
+
 getReviews = async (req, res) => {
   const { id } = req.params;
 
@@ -17,13 +30,13 @@ getReviews = async (req, res) => {
   if (role === "job_seeker") {
     const reviews = await ReviewFromEmployer.findAll({ where: { job_seeker_id: id } })
 
-    return res.status(200).json(reviews);
+    return res.status(200).json(margeReviews(user, reviews));
   }
 
   if (role === "employer") {
     const reviews = await ReviewFromJobSeeker.findAll({ where: { employer_id: id } })
 
-    return res.status(200).json(reviews);
+    return res.status(200).json(margeReviews(user, reviews));
   }
 
   if (role !== "job_seeker" && role !== "employer") {
