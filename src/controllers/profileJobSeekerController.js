@@ -201,7 +201,7 @@ function dataUrls(urls) {
   const defaultPath = "/uploads/avatars/defaultAvatar.png";
 
   if (typeof urls === "string") {
-    return `${process.env.BACKEND_ORIGIN}${urls}`
+    return `${process.env.BACKEND_ORIGIN}${defaultPath}`
   }
   if (Array.isArray(urls)) {
     return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)

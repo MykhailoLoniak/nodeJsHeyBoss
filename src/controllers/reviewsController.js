@@ -2,19 +2,35 @@ const { where } = require("sequelize");
 const { ApiError } = require("../exceptions/api.error");
 const userService = require("../services/userService");
 const { ReviewFromEmployer, ReviewFromJobSeeker } = require("../models");
+require('dotenv').config();
+const mergeReviews = async (currentUser, reviews) => {
+  const isCurrentUserEmployer = currentUser.role === "employer";
 
-const margeReviews = (user, reviews) => ({
-  user_name: user.user_name,
-  user_avatar: user.user_avatar,
-  job_seeker_id: user.id,
-  comment: reviews.comment,
-  createdAt: reviews.createdAt,
-  employer_id: reviews.employer_id,
-  job_id: reviews.job_id,
-  id: reviews.id,
-  rating: reviews.rating,
+  const data = await Promise.all(
+    reviews.map(async (review) => {
+      // Залежно від ролі поточного користувача, беремо іншого (того, хто залишив відгук)
+      const targetUserId = isCurrentUserEmployer ? review.job_seeker_id : review.employer_id;
+      const targetUser = await userService.getUser(targetUserId);
+      const targetUserDetails = await userService.findByIdDetail(targetUser.id, targetUser.role);
 
-})
+      return {
+        user_name: `${targetUser.first_name} ${targetUser.last_name}`,
+        user_avatar: `${process.env.BACKEND_ORIGIN}${targetUserDetails.avatar}`,
+        comment: review.comment,
+        createdAt: review.createdAt,
+        job_seeker_id: review.job_seeker_id,
+        employer_id: review.employer_id,
+        job_id: review.job_id,
+        id: review.id,
+        rating: review.rating,
+      };
+    })
+  );
+
+  return data;
+};
+
+
 
 getReviews = async (req, res) => {
   const { id } = req.params;
@@ -29,14 +45,17 @@ getReviews = async (req, res) => {
 
   if (role === "job_seeker") {
     const reviews = await ReviewFromEmployer.findAll({ where: { job_seeker_id: id } })
+    const data = await mergeReviews(user, reviews)
 
-    return res.status(200).json(margeReviews(user, reviews));
+    return res.status(200).json(data);
   }
 
   if (role === "employer") {
     const reviews = await ReviewFromJobSeeker.findAll({ where: { employer_id: id } })
 
-    return res.status(200).json(margeReviews(user, reviews));
+    const data = await mergeReviews(user, reviews)
+
+    return res.status(200).json(data);
   }
 
   if (role !== "job_seeker" && role !== "employer") {
