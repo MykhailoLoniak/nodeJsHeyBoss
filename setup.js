@@ -1,14 +1,4 @@
 require('dotenv/config');
-// const { Job } = require('./src/models/job');
-// const { User } = require('./src/models/user');
-// const { Token } = require('./src/models/token');
-// const { ChatRoom } = require('./src/models/chatRoom');
-// const { UserChatRoom } = require('./src/models/userChatRoom');
-// const { EmployerDetails } = require('./src/models/employerDetails');
-// const { ContractorDetails } = require('./src/models/contractorDetails');
-// const { ReviewFromJobSeeker } = require('./src/models/reviewFromJobSeeker');
-// const { ReviewFromEmployer } = require('./src/models/reviewFromEmployer');
-// // const { JobsExecutors } = require("./src/models/jobExecutors");
 const models = require('./src/models');
 
 const { client } = require('./src/utils/db');

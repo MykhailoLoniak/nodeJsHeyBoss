@@ -41,6 +41,9 @@ const getAllProfile = async (req, res) => {
         contact_info: detail?.contact_info || null,
         rating: await userServices.getRating(user.id) || null,
         company: detail?.company || null,
+        position: detail?.position || null,
+        skills: detail?.skills || null,
+
 
       };
     }));
@@ -56,14 +59,11 @@ const getAllProfile = async (req, res) => {
 const getProfile = async (req, res) => {
   const { id } = req.params;
 
-  console.log(":::::::::::::::::::::", id);
-
   const user = await userServices.getUser(+id);
 
   if (!user) {
     throw ApiError.badRequest("No such user");
   }
-  console.log(":::::::::::::::::::::", user.role);
 
   if (user.role === "employer") {
     throw ApiError.forbidden("No job seeker details found");
@@ -95,114 +95,131 @@ const getProfile = async (req, res) => {
     contact_info: detail?.contact_info || null,
     rating: await userServices.getRating(user.id) || null,
     company: detail?.company || null,
+    position: detail?.position || null,
+    skills: detail?.skills || null,
   }
 
   return res.status(200).json(data);
 };
 
 const patchProfile = async (req, res) => {
-  const { refresh_token } = req.cookies;
+  try {
+    const { refresh_token } = req.cookies;
 
-  if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
+    if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
 
-  let userData = await jwtService.verifyRefresh(refresh_token);
+    let userData = await jwtService.verifyRefresh(refresh_token);
 
-  if (!userData) {
-    res.clearCookie("refresh_token");
-    throw ApiError.unauthorized("Invalid refresh token");
+    if (!userData) {
+      res.clearCookie("refresh_token");
+      throw ApiError.unauthorized("Invalid refresh token");
+    }
+
+    const { id } = req.params;
+
+    if (+userData.id !== +id) {
+      throw ApiError.forbidden("You are not authorized to edit this profile");
+    }
+
+    const {
+      first_name,
+      last_name,
+      email,
+      job_category,
+      work_experience,
+      portfolio,
+      section_title,
+      description,
+      country,
+      location,
+      city,
+      phone_number,
+      contact_info,
+      company,
+      position,
+      skills,
+    } = req.body;
+
+    console.log("+++++++++++++++++", req.body);
+
+
+    const user = await User.findOne({ where: { id } });
+
+    if (!user) {
+      throw ApiError.notFound("User not found");
+    }
+
+    if (user.role === "employer") {
+      throw ApiError.forbidden("You are not authorized to edit this profile");
+    }
+
+
+
+    const detail = await ContractorDetails.findOne({ where: { user_id: +id } });
+
+    if (!detail) {
+      throw ApiError.forbidden("No job seeker details found");
+    }
+
+    await user.update({
+      ...(first_name !== undefined && { first_name }),
+      ...(last_name !== undefined && { last_name }),
+      ...(email !== undefined && { email }),
+    });
+
+    await detail.update({
+      ...(job_category !== undefined && { job_category }),
+      ...(work_experience !== undefined && { work_experience }),
+      ...(portfolio !== undefined && { portfolio }),
+      ...(section_title !== undefined && { section_title }),
+      ...(description !== undefined && { description }),
+      ...(country !== undefined && { country }),
+      ...(location !== undefined && { location }),
+      ...(city !== undefined && { city }),
+      ...(phone_number !== undefined && { phone_number }),
+      ...(contact_info !== undefined && { contact_info }),
+      ...(company !== undefined && { company }),
+      ...(position !== undefined && { position }),
+      ...(skills !== undefined && { skills }),
+    });
+
+    const data = {
+      user_id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      role: user.role,
+      email: user.email,
+
+      job_category: detail?.job_category || null,
+      work_experience: detail?.work_experience || null,
+      portfolio: detail?.portfolio || null,
+      section_title: detail?.section_title || null,
+      description: detail?.description || null,
+      country: detail?.country || null,
+      location: detail?.location || null,
+      city: detail?.city || null,
+      phone_number: detail?.phone_number || null,
+      avatar: dataUrls(detail?.avatar),
+      contact_info: detail?.contact_info || null,
+      company: detail?.company || null,
+      position: detail?.position || null,
+      skills: detail?.skills || null,
+
+    }
+
+    return res.status(200).json(data)
+  } catch (eroor) {
+    console.error("patchProfile________________", error);
   }
-
-  const { id } = req.params;
-
-  if (+userData.id !== +id) {
-    throw ApiError.forbidden("You are not authorized to edit this profile");
-  }
-
-  const {
-    first_name,
-    last_name,
-    email,
-    job_category,
-    work_experience,
-    portfolio,
-    section_title,
-    description,
-    country,
-    location,
-    city,
-    phone_number,
-    contact_info,
-    company,
-  } = req.body;
-
-  const user = await User.findOne({ where: { id } });
-
-  if (!user) {
-    throw ApiError.notFound("User not found");
-  }
-
-  if (user.role === "employer") {
-    throw ApiError.forbidden("You are not authorized to edit this profile");
-  }
-
-
-
-  const detail = await ContractorDetails.findOne({ where: { user_id: +id } });
-
-  if (!detail) {
-    throw ApiError.forbidden("No job seeker details found");
-  }
-
-  await user.update({
-    ...(first_name !== undefined && { first_name }),
-    ...(last_name !== undefined && { last_name }),
-    ...(email !== undefined && { email }),
-  });
-
-  await detail.update({
-    ...(job_category !== undefined && { job_category }),
-    ...(work_experience !== undefined && { work_experience }),
-    ...(portfolio !== undefined && { portfolio }),
-    ...(section_title !== undefined && { section_title }),
-    ...(description !== undefined && { description }),
-    ...(country !== undefined && { country }),
-    ...(location !== undefined && { location }),
-    ...(city !== undefined && { city }),
-    ...(phone_number !== undefined && { phone_number }),
-    ...(contact_info !== undefined && { contact_info }),
-    ...(company !== undefined && { company }),
-  });
-
-  const data = {
-    user_id: user.id,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    role: user.role,
-    email: user.email,
-
-    job_category: detail?.job_category || null,
-    work_experience: detail?.work_experience || null,
-    portfolio: detail?.portfolio || null,
-    section_title: detail?.section_title || null,
-    description: detail?.description || null,
-    country: detail?.country || null,
-    location: detail?.location || null,
-    city: detail?.city || null,
-    phone_number: detail?.phone_number || null,
-    avatar: dataUrls(detail?.avatar),
-    contact_info: detail?.contact_info || null,
-    company: detail?.company || null,
-  }
-
-  return res.status(200).json(data)
 }
 
 function dataUrls(urls) {
-  const defaultPath = "/uploads/avatars/defaultAvatar.png";
+  const defaultPath = "/uploads/avatars/defaultAvatar.svg";
 
   if (typeof urls === "string") {
-    return `${process.env.BACKEND_ORIGIN}${defaultPath}`
+    return `${process.env.BACKEND_ORIGIN}${urls}`
   }
+
   if (Array.isArray(urls)) {
     return urls.map(url => `${process.env.BACKEND_ORIGIN}${url}`)
   }
@@ -226,19 +243,24 @@ const getProjects = async (req, res) => {
 
     const projects = await Project.findAll({ where: { contractor_id: id } });
 
-    const data = projects.map(project => ({
-      // ...project.toJSON(),
-      projekt_id: project.id,
-      user_id: project.contractor_id,
-      title: project.title,
-      description: project.description,
-      media: dataUrls(url) || [],
-      createdAt: project.createdAt,
-      updatedAt: project.updatedAt,
-    }))
+    const data = projects.map(project => {
+
+      return ({
+        // ...project.toJSON(),
+        projekt_id: project.id,
+        user_id: project.contractor_id,
+        title: project.title,
+        description: project.description,
+        media: dataUrls(project.media) || [],
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
+      })
+    })
 
     return res.status(200).json(data);
   } catch (error) {
+    console.error("---------------------------------", error);
+
     res.status(500).json({ message: "Failed to fetch projects", error });
   }
 };
@@ -309,13 +331,12 @@ const postProjects = async (req, res) => {
     if (user.role === "employer") {
       throw ApiError.badRequest('User is not a job seeker');
     }
-    console.log("_____________________________");
 
     const projekt = await Project.create({
       contractor_id: id,
       title,
       description,
-      media: dataUrls(mediaUrls) || [],
+      media: mediaUrls || [],
     })
 
     res.status(200).json(projekt);

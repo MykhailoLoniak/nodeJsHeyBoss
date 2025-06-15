@@ -3,6 +3,10 @@ const { EmployerDetails } = require("../models/employerDetails");
 const userServices = require("../services/userService");
 const ApiError = require("../exceptions/api.error");
 const { jwtService } = require("../services/jwtService");
+const roles = require("../constants/roleJobSeeker");
+const skills = require("../constants/skills");
+const { ContractorDetails } = require("../models/contractorDetails");
+const { Op, where } = require("sequelize");
 
 const getAllProfile = async (req, res) => {
   const users = await User.findAll({ where: { role: "employer" } });
@@ -62,10 +66,6 @@ const patchProfile = async (req, res) => {
   const { id } = req.params;
   const { refresh_token } = req.cookies;
 
-  console.log("________________________________", id);
-  console.log("________________________________", refresh_token);
-
-
   if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
 
   const user = await jwtService.verifyRefresh(refresh_token);
@@ -87,6 +87,7 @@ const patchProfile = async (req, res) => {
     team_size,
     clients,
     contact_info,
+
   } = req.body;
 
   const detail = await EmployerDetails.findOne({ where: { user_id: id } });
@@ -112,6 +113,7 @@ const patchProfile = async (req, res) => {
     ...(team_size !== undefined && { team_size }),
     ...(clients !== undefined && { clients }),
     ...(contact_info !== undefined && { contact_info }),
+
     // ...(rating !== undefined && { rating }),
   });
 
@@ -123,11 +125,75 @@ const patchProfile = async (req, res) => {
   return res.status(200).json({ message: "Profile updated", data });
 };
 
+const getRole = (req, res) => {
+
+  res.status(200).json(roles)
+}
+
+const getSkills = (req, res) => {
+  const { id } = req.params;
+
+  const data = skills.filter(skill => +skill.roleId === +id)
+
+  res.status(200).json(data)
+}
+
+const findUsersBySkills = async (req, res) => {
+  try {
+    const rawSkills = req.query.skill;
+
+    const skillIds = Array.isArray(rawSkills)
+      ? rawSkills.map(Number)
+      : [Number(rawSkills)];
+
+    const skillsLabel = skills
+      .filter(skill => skillIds
+        .includes(+skill.id))
+      .map(skill => skill.label)
+    console.log("🧠 ID скілів:", skillIds);
+    console.log("🧠 скіли:", skillsLabel);
+
+    // const user = await User.findAll({ where: { id: user_id } })
+
+    const userDetail = await ContractorDetails.findAll({
+      where: {
+        skills: {
+          [Op.contains]: skillsLabel // перевірка на наявність *усіх* скілів
+        }
+      }
+    });
+
+    const usersNested = await Promise.all(
+      userDetail.map(async detail => {
+        const user = await userServices.getUser(detail.user_id);
+
+        return {
+          first_name: user.first_name,
+          last_name: user.last_name,
+          avatar: `${process.env.BACKEND_ORIGIN}${detail.avatar}`,
+          user_id: detail.user_id
+        };
+      })
+    );
+
+    // Плоский масив (опціонально):
+    const users = usersNested.flat(); // якщо потрібно об'єднати всі внутрішні масиви в один
+
+
+    res.status(200).json(users)
+  } catch (error) {
+    console.error("findUsersBySkills_____________", error);
+
+  }
+};
 
 const profileController = {
   getAllProfile,
   getProfile,
   patchProfile,
+  getRole,
+  getSkills,
+  findUsersBySkills,
 };
 
 module.exports = profileController

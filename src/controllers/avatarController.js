@@ -5,43 +5,6 @@ const { jwtService } = require("../services/jwtService");
 const { deleteImage } = require("../utils/fs");
 require('dotenv').config();
 
-
-// const uploadAvatar = async (req, res) => {
-//   const id = req.params.id;
-//   const file = req.file;
-
-//   try {
-//     const { refresh_token } = req.cookies;
-//     const user = await jwtService.verifyRefresh(refresh_token);
-
-//     if (!user || !refresh_token) throw ApiError.unauthorized();
-//     if (user.id !== +id) throw ApiError.forbidden("You are not authorized to edit this profile");
-//     if (!file) throw ApiError.badRequest("File not provided")
-
-//     const avatarUrl = `/uploads/avatars/${file.filename}`;
-
-//     let detail;
-
-//     if (user.role === "employer") {
-//       detail = await EmployerDetails.findOne({ where: { user_id: id } })
-//     } else if (user.role === "job_seeker") {
-//       detail = await ContractorDetails.findOne({ where: { user_id: id } })
-//     }
-
-//     detail.avatar = avatarUrl;
-//     await detail.save();
-
-//     res.status(200).json({ avatarUrl: `${process.env.BACKEND_ORIGIN}${avatarUrl}` });
-//   } catch {
-//     ((error) => {
-//       res.status(500).json({
-//         message: "Failed to update avatar",
-//         error,
-//       });
-//     })
-//   }
-// };
-
 const uploadAvatar = async (req, res) => {
   const id = req.params.id;
   const file = req.files?.avatar?.[0];

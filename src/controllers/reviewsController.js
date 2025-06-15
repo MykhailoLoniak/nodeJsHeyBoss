@@ -6,9 +6,11 @@ require('dotenv').config();
 const mergeReviews = async (currentUser, reviews) => {
   const isCurrentUserEmployer = currentUser.role === "employer";
 
+  // Якщо передано один об’єкт — обгортаємо його в масив
+  const reviewsArray = Array.isArray(reviews) ? reviews : [reviews];
+
   const data = await Promise.all(
-    reviews.map(async (review) => {
-      // Залежно від ролі поточного користувача, беремо іншого (того, хто залишив відгук)
+    reviewsArray.map(async (review) => {
       const targetUserId = isCurrentUserEmployer ? review.job_seeker_id : review.employer_id;
       const targetUser = await userService.getUser(targetUserId);
       const targetUserDetails = await userService.findByIdDetail(targetUser.id, targetUser.role);
@@ -31,15 +33,14 @@ const mergeReviews = async (currentUser, reviews) => {
 };
 
 
-
 getReviews = async (req, res) => {
   const { id } = req.params;
 
-  if (!id) throw ApiError.BadRequest("id is required");
+  if (!id) throw ApiError.badRequest("id is required");
 
   const user = await userService.getUser(id);
 
-  if (!user) throw ApiError.BadRequest("User not found");
+  if (!user) throw ApiError.badRequest("User not found");
 
   const { role } = user;
 
@@ -59,7 +60,7 @@ getReviews = async (req, res) => {
   }
 
   if (role !== "job_seeker" && role !== "employer") {
-    throw ApiError.BadRequest("Invalid user role");
+    throw ApiError.badRequest("Invalid user role");
   }
 }
 
@@ -67,24 +68,44 @@ const postReviewFromJobSeeker = async (req, res) => {
   const { rating, comment, employer_id, job_seeker_id, job_id } = req.body;
 
   if (!rating || !comment || !employer_id || !job_id || !job_seeker_id) {
-    throw ApiError.BadRequest("rating, comment, employer_id, job_id and job_seeker_id are required");
+    throw ApiError.badRequest("rating, comment, employer_id, job_id and job_seeker_id are required");
   }
 
   const review = await ReviewFromJobSeeker.create({ rating, comment, employer_id, job_seeker_id, job_id });
 
-  return res.status(201).json(review);
+  const user = await userService.getUser(employer_id);
+
+  if (!user) throw ApiError.badRequest("User not found");
+
+  const data = await mergeReviews(user, review)
+
+
+  return res.status(201).json(data);
 };
 
 const postReviewFromEmployer = async (req, res) => {
   const { rating, comment, employer_id, job_seeker_id, job_id } = req.body;
 
-  if (!rating || !comment || !employer_id || !job_id || !job_seeker_id) {
-    throw ApiError.BadRequest("rating, comment, employer_id, job_id and job_seeker_id are required");
+  try {
+
+
+    if (!rating || !comment || !employer_id || !job_id || !job_seeker_id) {
+      throw ApiError.badRequest("rating, comment, employer_id, job_id and job_seeker_id are required");
+    }
+
+    const user = await userService.getUser(employer_id);
+
+    if (!user) throw ApiError.badRequest("User not found");
+
+    const review = await ReviewFromEmployer.create({ rating, comment, employer_id, job_seeker_id, job_id });
+
+    const data = await mergeReviews(user, review)
+
+    return res.status(201).json(data);
+  } catch (err) {
+    console.error("--------------------------", err);
+
   }
-
-  const review = await ReviewFromEmployer.create({ rating, comment, employer_id, job_seeker_id, job_id });
-
-  return res.status(201).json(review);
 };
 
 

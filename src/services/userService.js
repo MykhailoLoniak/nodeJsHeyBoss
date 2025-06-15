@@ -102,7 +102,7 @@ const mergeUserData = async (user, detail) => {
     clients: detail?.clients || null,
     contact_info: detail?.contact_info || null,
     rating: detail?.rating || null,
-    avatar: dataUrl(detail?.avatar),
+    avatar: dataUrl(detail?.avatar || null),
     rating: await getRating(user.id) || null,
   }
 }
@@ -126,7 +126,8 @@ const saveNewUser = (req, res) => {
   return res.redirect(redirectUrl);
 }
 
-function dataUrl(url = "/uploads/avatars/defaultAvatar.png") {
+function dataUrl(url) {
+  if (!url) url = "/uploads/avatars/defaultAvatar.svg"
   return `${process.env.BACKEND_ORIGIN}${url}`
 }
 

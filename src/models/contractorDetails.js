@@ -53,7 +53,13 @@ const ContractorDetails = client.define(
     phone_number: {
       type: DataTypes.STRING,
     },
+    position: {
+      type: DataTypes.STRING,
+    },
     contact_info: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    skills: {
       type: DataTypes.ARRAY(DataTypes.STRING),
     },
   },

@@ -25,14 +25,11 @@ const Project = client.define('project', {
     type: DataTypes.TEXT,
   },
   media: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // URL до фото або файлу
+    type: DataTypes.ARRAY(DataTypes.STRING),
   },
 }, {
-  tableName: 'projects',
+  tableName: '',
   underscored: true,
 });
-
-// ContractorDetails.hasMany(Project, { foreignKey: 'contractor_id' });
-// Project.belongsTo(ContractorDetails, { foreignKey: 'contractor_id' });
 
 module.exports = { Project };

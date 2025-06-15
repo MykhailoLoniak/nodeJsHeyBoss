@@ -1,20 +1,20 @@
 const { Sequelize } = require('sequelize');
 
 const client = new Sequelize(
-  'localhost_u5tt', // Назва бази даних
-  'misha',          // Ім'я користувача
-  'RVCRoVMOyuTzdKsk2tasZwpZctzBcoKE', // Пароль
+  'localhost_3b28', // назва бази з URI
+  'misha',          // користувач
+  'GRp3HuDHth6ssPfElQVmhyQJqxmw1jQf', // пароль
   {
-    host: 'dpg-d0f348re5dus738oro60-a.oregon-postgres.render.com', // Хост
+    host: 'dpg-d17i8sqdbo4c73fvo440-a.oregon-postgres.render.com',
     dialect: 'postgres',
     port: 5432,
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false, // не перевіряє сертифікат
+        rejectUnauthorized: false
       }
     },
-    logging: false // вимикає SQL-логи
+    logging: false
   }
 );
 

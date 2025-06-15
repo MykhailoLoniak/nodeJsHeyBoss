@@ -12,33 +12,22 @@ const UserChatRoom = client.define("userChatRoom", {
   chat_room_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: ChatRoom,
-      key: "id",
-    },
+    references: { model: ChatRoom, key: "id" },
   },
-  sender_id: {
+  user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: User,
-      key: "id",
-    },
-
-  },
-  text: {
-    type: DataTypes.TEXT,
-    allowNull: false
+    references: { model: User, key: "id" },
   },
   last_read_message_id: {
     type: DataTypes.INTEGER,
-    allowNull: false
-  },
-
+    allowNull: true, // можливо, ще не читав жодного
+  }
 }, {
-  tableName: "userChatRoom",
+  tableName: "user_chat_rooms",
   underscored: true,
 });
+
 
 // ChatRoom.belongsTo(User, { foreignKey: "userId" });
 

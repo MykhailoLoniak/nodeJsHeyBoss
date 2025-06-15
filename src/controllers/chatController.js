@@ -4,60 +4,52 @@ const { User } = require("../models/user");
 const { where } = require("sequelize");
 const { Op } = require('sequelize');
 const { ApiError } = require("../exceptions/api.error");
+const { EmployerDetails } = require("../models/employerDetails");
+const { ContractorDetails } = require("../models/contractorDetails");
+const { Message } = require("../models/message");
+require('dotenv').config();
+
+
+const normalizeUser = async ({ email, first_name, id, last_name, role }) => {
+  let detailModel;
+  if (role === "employer") {
+    detailModel = EmployerDetails;
+  } else {
+    detailModel = ContractorDetails;
+  }
+
+  const detail = await detailModel.findOne({ where: { user_id: id } });
+
+
+  return {
+    email,
+    first_name,
+    user_id: id,
+    last_name,
+    role,
+    avatar: `${process.env.BACKEND_ORIGIN}${detail.dataValues.avatar}`
+  }
+}
 
 const createChatRoom = async (req, res) => {
-  const { name, type, userIds } = req.body;
+  try {
+    const { userId, chatPartner } = req.body;
 
-  if (!name || typeof name !== "string") {
-    throw ApiError.badRequest("Invalid or missing chat room name");
-  }
-
-  if (!["group", "individual"].includes(type)) {
-    throw ApiError.badRequest("Invalid chat room type");
-  }
-
-
-  if (!Array.isArray(userIds)) {
-    throw ApiError.badRequest("Invalid userIds format");
-  }
-
-  if (type === "group") {
-    const room = await ChatRoom.create({ name, type, userIds })
-
-    return res.status(201).json(room);
-  }
-
-  if (type === "individual" && userIds.length === 2) {
-    const existingRoom = await ChatRoom.findOne({
-      where: { type: "individual" },
-      include: [
-        {
-          model: UserChatRoom,
-          where: { userId: userIds },
-          required: true,
-        },
-      ],
-      having: where("COUNT(DISTINCT UserChatRoom.userId)", "=", 2),
-    });
-
-
-    if (existingRoom) {
-      return res.status(200).json(existingRoom.chatRoom);
+    if (!userId || !chatPartner) {
+      throw ApiError.badRequest("Invalid userId or chatPartner");
     }
 
     const room = await ChatRoom.create({
-      name: `Chat between ${userIds[0]} and ${userIds[1]}`,
-      type,
+      user_ids: [userId, chatPartner],
+
     });
 
-    await UserChatRoom.bulkCreate(
-      userIds.map((userId) => ({ userId, chatRoomId: room.id }))
-    );
-
     return res.status(201).json(room);
+  } catch (error) {
+    console.error("_______________________:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 
-  return res.status(400).json({ message: "Invalid data for chat creation" });
 };
 
 const getChatRooms = async (req, res) => {
@@ -65,13 +57,54 @@ const getChatRooms = async (req, res) => {
 
   try {
     const chatRooms = await ChatRoom.findAll();
-    const rooms = chatRooms.filter(e => e.userIds.includes(Number(userId)));
+
+    const rooms = chatRooms.filter(e => (e.user_ids.includes(Number(userId))));
 
     if (rooms.length === 0) {
-      return res.status(404).json({ message: "Chat room not found" });
+      return res.status(404).json({ message: "Chat rooms not found" });
     }
 
-    res.status(200).json(rooms);
+    const roomsWithDatail = await Promise.all(
+      rooms.map(async room => {
+        const members = await UserChatRoom.findAll({
+          where: { id: room.id },
+        });
+
+        return { ...room, ...members };
+      })
+    );
+
+    const roomsWithUsers = await Promise.all(
+      roomsWithDatail.map(async room => {
+        const [user1, user2] = await Promise.all(
+          room.dataValues.user_ids.map(id => User.findByPk(id))
+        );
+
+        return {
+          ...room.dataValues,
+          user1: await normalizeUser(user1),
+          user2: await normalizeUser(user2),
+        };
+      })
+    );
+
+    const roomWithLastMessage = await Promise.all(
+      roomsWithUsers.map(async room => {
+        const lastMsg = await Message.findOne({
+          where: { chat_room_id: room.id },
+          order: [['createdAt', 'DESC']]
+        });
+
+        return {
+          ...room,
+          last_message: lastMsg ? lastMsg.text : null,
+          time_message: lastMsg ? lastMsg.createdAt : null,
+        };
+      })
+    );
+
+
+    res.status(200).json(roomWithLastMessage);
   } catch (error) {
     console.error("Error fetching chat rooms:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -81,34 +114,26 @@ const getChatRooms = async (req, res) => {
 const getMessages = async (req, res) => {
   const { chatRoomId, userId } = req.params;
 
-  const chatRoom = await ChatRoom.findByPk(chatRoomId);
-
-  if (!chatRoom) {
-    return res.status(404).json({ message: "Chat room not found" });
-  }
-
-  if (!chatRoom.userIds.includes(Number(userId))) {
-    return res.status(403).json({ message: "User is not part of this chat room" });
-  }
-
   try {
-    const messages = await UserChatRoom.findAll({ where: { chatRoomId } });
+    const messages = await Message.findAll({
+      where: { chat_room_id: chatRoomId },
+    });
 
-    if (!messages.length) {
+    if (!messages?.length) {
       throw ApiError.notFound("Chat room not found");
     }
 
     const messagesWithUsers = await Promise.all(
       messages.map(async (message) => {
-        const user = await User.findOne({ where: { id: message.senderId } });
+        const user = await User.findOne({ where: { id: message.sender_id } });
 
         return {
           id: message.id,
-          senderId: message.senderId,
+          sender_id: message.sender_id,
           text: message.text,
           createdAt: message.createdAt,
-          firstName: user ? user.firstName : "Unknown",
-          lastName: user ? user.lastName : "User",
+          firstName: user ? user.first_name : "Unknown",
+          lastName: user ? user.last_name : "User",
         };
       })
     );
@@ -205,13 +230,13 @@ const searchUsers = async (req, res) => {
   const users = await User.findAll({
     where: {
       [Op.or]: [
-        { firstName: { [Op.iLike]: `%${qwer}%` } },
-        { lastName: { [Op.iLike]: `%${qwer}%` } }
+        { firstName: { [Op.iLike]: `% ${qwer}% ` } },
+        { lastName: { [Op.iLike]: `% ${qwer}% ` } }
       ]
     }
   });
 
-  const arrUsers = users.map(user => [`${user.firstName} ${user.lastName}`, user.id]);
+  const arrUsers = users.map(user => [`${user.firstName} ${user.lastName} `, user.id]);
 
   res.status(200).json(arrUsers)
 }

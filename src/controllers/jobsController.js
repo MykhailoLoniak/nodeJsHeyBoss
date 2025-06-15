@@ -107,16 +107,17 @@ const filterJobs = async (req, res) => {
 const newJobs = async (req, res, next) => {
   try {
     const {
+      application_deadline,
       company_id,
       job_title,
-      location,
-      employment_type,
       min_salary,
       max_salary,
+      visibility,
+      
+      location,
+      employment_type,
       short_summary,
       full_description,
-      application_deadline,
-      visibility,
       // status,
     } = req.body;
 

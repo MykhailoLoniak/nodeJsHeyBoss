@@ -13,16 +13,9 @@ const ChatRoom = client.define("chat_room", {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  type: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-},{
-  tableName: "chatRoom",
+
+}, {
+  tableName: "chat_rooms",
   underscored: true,
 });
 

@@ -9,7 +9,8 @@ const { EmployerDetails } = require('./employerDetails');
 const { ContractorDetails } = require('./contractorDetails');
 const { ReviewFromJobSeeker } = require('./reviewFromJobSeeker');
 const { ReviewFromEmployer } = require('./reviewFromEmployer');
-const { Project } = require('./project')
+const { Project } = require('./project');
+const { Message } = require('./message');
 // const { JobExecutors } = require('./jobExecutors');
 
 ReviewFromJobSeeker.belongsTo(User, { as: 'jobSeeker', foreignKey: 'job_seeker_id' });
@@ -33,6 +34,19 @@ User.hasOne(Token, { foreignKey: 'userId' });
 ContractorDetails.hasMany(Project, { foreignKey: 'contractor_id' });
 Project.belongsTo(ContractorDetails, { foreignKey: 'contractor_id' });
 
+
+// ChatRoom має багато повідомлень
+ChatRoom.hasMany(Message, { foreignKey: "chat_room_id" });
+Message.belongsTo(ChatRoom, { foreignKey: "chat_room_id" });
+
+// Користувач має багато повідомлень
+User.hasMany(Message, { foreignKey: "sender_id" });
+Message.belongsTo(User, { foreignKey: "sender_id" });
+
+// Кімната має багато користувачів
+ChatRoom.belongsToMany(User, { through: UserChatRoom, foreignKey: "chat_room_id" });
+User.belongsToMany(ChatRoom, { through: UserChatRoom, foreignKey: "user_id" });
+
 module.exports = {
   client,
   User,
@@ -45,5 +59,6 @@ module.exports = {
   ContractorDetails,
   ReviewFromJobSeeker,
   ReviewFromEmployer,
+  Message
 
 };

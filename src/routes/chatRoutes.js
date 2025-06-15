@@ -5,10 +5,9 @@ const { catchError } = require("../utils/catchError");
 const routerChat = Router();
 
 routerChat.post("/", catchError(chatController.createChatRoom));
-routerChat.get("/rooms/:userId", catchError(chatController.getChatRooms));
-routerChat.get("/rooms/:chatRoomId/messages/:userId", catchError(chatController.getMessages));
-routerChat.delete("/rooms/:chatRoomId", catchError(chatController.deleteChatRoom)); //повне видалення чату
-
+routerChat.get("/:userId/", catchError(chatController.getChatRooms));
+routerChat.get("/:chatRoomId/messages/:userId", catchError(chatController.getMessages));
+routerChat.delete("/rooms/:chatRoomId", catchError(chatController.deleteChatRoom));
 
 routerChat.get("/users/:qwer", catchError(chatController.searchUsers));
 
