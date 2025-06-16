@@ -144,6 +144,10 @@ const mergeUserData = async (user, detail) => {
 
 const getToken = async (req, res) => {
   const user = req.user;
+
+  console.log("_____________________", user);
+
+
   let tokens = await generateTokens(res, req.user);
 
   if (!tokens) throw new ApiError(401, "Unauthorized");
