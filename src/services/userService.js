@@ -5,7 +5,6 @@ const { EmployerDetails } = require("../models/employerDetails")
 const { ApiError } = require("../exceptions/api.error.js");
 const { ReviewFromEmployer } = require("../models/reviewFromEmployer.js");
 const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
-const authController = require("../controllers/authController.js");
 require('dotenv').config();
 
 const generateTokens = async (res, user) => {
@@ -171,6 +170,7 @@ const userServices = {
   getToken,
   getRating,
   dataUrl,
+  generateTokens,
 }
 
 module.exports = userServices;
