@@ -124,25 +124,48 @@ const activate = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!password || !email) throw ApiError.badRequest("Incorrect data");
+    if (!password || !email) {
+      throw ApiError.badRequest("Incorrect data");
+    }
 
-  const user = await userServices.findByEmail(email);
+    const user = await userServices.findByEmail(email);
 
-  if (!user) throw ApiError.badRequest("No such user");
+    if (!user) {
+      throw ApiError.badRequest("No such user");
+    }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  if (!isPasswordValid) throw ApiError.badRequest("Wrong password");
+    if (!isPasswordValid) {
+      throw ApiError.badRequest("Wrong password");
+    }
 
-  if (user.activation_token) throw ApiError.forbidden("Confirm your email");
+    if (user.activation_token) {
+      throw ApiError.forbidden("Confirm your email");
+    }
 
-  const tokens = await generateTokens(res, user);
+    const tokens = await userServices.generateTokens(res, user);
 
-  if (!tokens) throw ApiError.unauthorized("Unauthorized");
+    if (!tokens) {
+      throw ApiError.unauthorized("Unauthorized");
+    }
 
-  return res.status(200).json(tokens);
+    console.log("___________________________", tokens);
+
+
+    return res.status(200).json(tokens); // ⬅️ успішна відповідь
+  } catch (error) {
+    console.error("Error login______________:", error);
+
+    // Повернення помилки (припущення: error має status і message)
+    const status = error.status || 500;
+    const message = error.message || "Server error";
+
+    return res.status(status).json({ error: message });
+  }
 };
 
 const logout = async (req, res) => {

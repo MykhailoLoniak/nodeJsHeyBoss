@@ -5,31 +5,40 @@ const { EmployerDetails } = require("../models/employerDetails")
 const { ApiError } = require("../exceptions/api.error.js");
 const { ReviewFromEmployer } = require("../models/reviewFromEmployer.js");
 const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
+const { errorMiddleware } = require("../middlewares/errorMiddleware.js");
+const { jwtService } = require("./jwtService.js");
+const tokenServices = require("../services/tokenService.js");
+
 require('dotenv').config();
 
 const generateTokens = async (res, user) => {
-  const normalizeUser = userServices.normalize(user);
-  const accessToken = jwtService.sign(normalizeUser);
-  const refreshAccessToken = jwtService.signRefresh(normalizeUser);
+  try {
+    const normalizeUser = userServices.normalize(user);
+    const accessToken = jwtService.sign(normalizeUser);
+    const refreshAccessToken = jwtService.signRefresh(normalizeUser);
 
-  await tokenServices.save(user.id, refreshAccessToken);
+    await tokenServices.save(user.id, refreshAccessToken);
 
-  if (res) {
-    res.cookie("refresh_token", refreshAccessToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
+    if (res) {
+      res.cookie("refresh_token", refreshAccessToken, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
 
-    });
+      });
+    }
+
+    const send = {
+      user: normalizeUser,
+      accessToken,
+    };
+
+    return send;
+  } catch (error) {
+    console.error("Error generateTokens______________:", error);
+
   }
-
-  const send = {
-    user: normalizeUser,
-    accessToken,
-  };
-
-  return send;
 };
 
 const getRating = async (id) => {
