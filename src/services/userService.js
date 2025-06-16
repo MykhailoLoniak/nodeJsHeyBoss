@@ -148,7 +148,7 @@ const getToken = async (req, res) => {
 
   if (!tokens) throw new ApiError(401, "Unauthorized");
 
-  const redirectUrl = `${process.env.CLIENT_ORIGIN}/auth?firstName=${encodeURIComponent(user.first_name)}&lastName=${encodeURIComponent(user.last_name)}&accessToken=${encodeURIComponent(tokens.accessToken)}`;
+  const redirectUrl = `${process.env.CLIENT_ORIGIN}/auth?firstName=${encodeURIComponent(user.first_name)}&lastName=${encodeURIComponent(user.last_name)}&userId=${encodeURIComponent(user.user_id)}&role=${encodeURIComponent(user.role)}&accessToken=${encodeURIComponent(tokens.accessToken)}`;
 
   return res.redirect(redirectUrl);
 };
