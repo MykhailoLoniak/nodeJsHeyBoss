@@ -8,6 +8,31 @@ const { ReviewFromJobSeeker } = require("../models/reviewFromJobSeeker.js");
 const authController = require("../controllers/authController.js");
 require('dotenv').config();
 
+const generateTokens = async (res, user) => {
+  const normalizeUser = userServices.normalize(user);
+  const accessToken = jwtService.sign(normalizeUser);
+  const refreshAccessToken = jwtService.signRefresh(normalizeUser);
+
+  await tokenServices.save(user.id, refreshAccessToken);
+
+  if (res) {
+    res.cookie("refresh_token", refreshAccessToken, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
+
+    });
+  }
+
+  const send = {
+    user: normalizeUser,
+    accessToken,
+  };
+
+  return send;
+};
+
 const getRating = async (id) => {
   const user = await User.findOne({ where: { id } });
 
@@ -111,7 +136,7 @@ const mergeUserData = async (user, detail) => {
 
 const getToken = async (req, res) => {
   const user = req.user;
-  let tokens = await authController.generateTokens(res, req.user);
+  let tokens = await generateTokens(res, req.user);
 
   if (!tokens) throw new ApiError(401, "Unauthorized");
 

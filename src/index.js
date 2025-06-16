@@ -19,6 +19,8 @@ const { setupWebSocketServer } = require("./websocket/websocketServer");
 const profileJobSeekerRoutes = require("./routes/profileJobSeekerRoutes");
 
 const app = express();
+app.set('trust proxy', 1);
+
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3005;
 

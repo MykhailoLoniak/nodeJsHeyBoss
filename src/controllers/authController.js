@@ -10,30 +10,30 @@ const emailServices = require("../services/emailService");
 const { EmployerDetails } = require("../models/employerDetails")
 const { ContractorDetails } = require("../models/contractorDetails");
 
-const generateTokens = async (res, user) => {
-  const normalizeUser = userServices.normalize(user);
-  const accessToken = jwtService.sign(normalizeUser);
-  const refreshAccessToken = jwtService.signRefresh(normalizeUser);
+// const generateTokens = async (res, user) => {
+//   const normalizeUser = userServices.normalize(user);
+//   const accessToken = jwtService.sign(normalizeUser);
+//   const refreshAccessToken = jwtService.signRefresh(normalizeUser);
 
-  await tokenServices.save(user.id, refreshAccessToken);
+//   await tokenServices.save(user.id, refreshAccessToken);
 
-  if (res) {
-    res.cookie("refresh_token", refreshAccessToken, {
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
+//   if (res) {
+//     res.cookie("refresh_token", refreshAccessToken, {
+//       maxAge: 7 * 24 * 60 * 60 * 1000,
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax"
 
-    });
-  }
+//     });
+//   }
 
-  const send = {
-    user: normalizeUser,
-    accessToken,
-  };
+//   const send = {
+//     user: normalizeUser,
+//     accessToken,
+//   };
 
-  return send;
-};
+//   return send;
+// };
 
 const register = async (req, res) => {
   const {
@@ -189,7 +189,7 @@ const refresh = async (req, res) => {
 
   if (!user) throw ApiError.notFound("User not found");
 
-  const send = await generateTokens(res, user);
+  const send = await userServices.generateTokens(res, user);
 
   return res.status(200).json(send);
 };
@@ -260,7 +260,6 @@ const deleteProfile = async (req, res) => {
 }
 
 const authController = {
-  generateTokens,
   register,
   activate,
   login,
