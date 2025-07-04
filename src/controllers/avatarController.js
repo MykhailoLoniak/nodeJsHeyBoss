@@ -1,7 +1,9 @@
 const { ApiError } = require("../exceptions/api.error");
+const { User } = require("../models");
 const { ContractorDetails } = require("../models/contractorDetails");
 const { EmployerDetails } = require("../models/employerDetails");
 const { jwtService } = require("../services/jwtService");
+const userServices = require("../services/userService");
 const { deleteImage } = require("../utils/fs");
 require('dotenv').config();
 
@@ -50,14 +52,15 @@ const uploadAvatar = async (req, res) => {
 };
 
 const getAvatar = async (req, res) => {
-  const { id } = req.params;
-
-  const { refresh_token } = req.cookies;
-  const user = await jwtService.verifyRefresh(refresh_token);
-
-  let detail;
-
   try {
+    const { id } = req.params;
+
+    // const { refresh_token } = req.cookies;
+    // const user = await jwtService.verifyRefresh(refresh_token);
+    const user = await userServices.getUser(+id);
+
+    let detail;
+
     if (user.role === "employer") {
       detail = await EmployerDetails.findOne({ where: { user_id: id } })
     } else if (user.role === "job_seeker") {
@@ -70,6 +73,8 @@ const getAvatar = async (req, res) => {
 
     return res.status(200).json({ avatarUrl });
   } catch (err) {
+    console.error("Ava error____:", err);
+
     res.status(500).json({ err })
   }
 }

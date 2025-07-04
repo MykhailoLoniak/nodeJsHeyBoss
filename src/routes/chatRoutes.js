@@ -2,18 +2,19 @@ const { Router } = require("express");
 const chatController = require("../controllers/chatController");
 const { catchError } = require("../utils/catchError");
 
-const routerChat = Router();
+const router = Router();
 
-routerChat.post("/", catchError(chatController.createChatRoom));
-routerChat.get("/:userId/", catchError(chatController.getChatRooms));
-routerChat.get("/:chatRoomId/messages/:userId", catchError(chatController.getMessages));
-routerChat.delete("/rooms/:chatRoomId", catchError(chatController.deleteChatRoom));
+router.get("/", catchError(chatController.getRooms));
+router.post("/", catchError(chatController.createChatRoom));
+router.get("/:userId/", catchError(chatController.getChatRooms));
+router.get("/:chatRoomId/messages/:userId", catchError(chatController.getMessages));
 
-routerChat.get("/users/:qwer", catchError(chatController.searchUsers));
+router.delete("/rooms/:chatRoomId", catchError(chatController.deleteChatRoom));
+router.get("/users/:qwer", catchError(chatController.searchUsers));
 
-routerChat.delete("/rooms/:chatRoomId/users/:userId", catchError(chatController.removeUserFromChat));
-// routerChat.get("/users/:userId/chats", catchError(chatController.getUserChats));
-routerChat.post("/rooms/:chatRoomId/users", catchError(chatController.addUserToChat));
-routerChat.put("/rooms/:chatRoomId", catchError(chatController.updateChatRoom));
+router.delete("/rooms/:chatRoomId/users/:userId", catchError(chatController.removeUserFromChat));
+// router.get("/users/:userId/chats", catchError(chatController.getUserChats));
+router.post("/rooms/:chatRoomId/users", catchError(chatController.addUserToChat));
+router.put("/rooms/:chatRoomId", catchError(chatController.updateChatRoom));
 
-module.exports = routerChat;
+module.exports = router;

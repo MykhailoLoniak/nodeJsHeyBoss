@@ -11,6 +11,8 @@ const { ReviewFromJobSeeker } = require('./reviewFromJobSeeker');
 const { ReviewFromEmployer } = require('./reviewFromEmployer');
 const { Project } = require('./project');
 const { Message } = require('./message');
+const { Event } = require('./event');
+const { EventShares } = require('./event_shares');
 // const { JobExecutors } = require('./jobExecutors');
 
 ReviewFromJobSeeker.belongsTo(User, { as: 'jobSeeker', foreignKey: 'job_seeker_id' });
@@ -25,27 +27,36 @@ ContractorDetails.belongsTo(User, { foreignKey: "user_id" });
 EmployerDetails.belongsTo(User, { foreignKey: "user_id" });
 Job.belongsTo(User, { foreignKey: "company_id" });
 
-// JobExecutors.belongsTo(Job, { foreignKey: "job_id" });
-// JobExecutors.belongsTo(User, { foreignKey: "user_id" });
-
 Token.belongsTo(User, { foreignKey: 'userId' });
 User.hasOne(Token, { foreignKey: 'userId' });
 
 ContractorDetails.hasMany(Project, { foreignKey: 'contractor_id' });
 Project.belongsTo(ContractorDetails, { foreignKey: 'contractor_id' });
 
-
-// ChatRoom має багато повідомлень
 ChatRoom.hasMany(Message, { foreignKey: "chat_room_id" });
 Message.belongsTo(ChatRoom, { foreignKey: "chat_room_id" });
 
-// Користувач має багато повідомлень
 User.hasMany(Message, { foreignKey: "sender_id" });
 Message.belongsTo(User, { foreignKey: "sender_id" });
 
-// Кімната має багато користувачів
 ChatRoom.belongsToMany(User, { through: UserChatRoom, foreignKey: "chat_room_id" });
 User.belongsToMany(ChatRoom, { through: UserChatRoom, foreignKey: "user_id" });
+
+Event.belongsTo(User, { foreignKey: 'user_id', as: 'organizer' });
+User.hasMany(Event, { foreignKey: 'user_id', as: 'createdEvents' });
+
+Event.belongsToMany(User, {
+  through: EventShares,
+  foreignKey: 'event_id',
+  otherKey: 'user_id',
+  as: 'attendees'
+});
+User.belongsToMany(Event, {
+  through: EventShares,
+  foreignKey: 'user_id',
+  otherKey: 'event_id',
+  as: 'attendingEvents'
+});
 
 module.exports = {
   client,
@@ -59,6 +70,7 @@ module.exports = {
   ContractorDetails,
   ReviewFromJobSeeker,
   ReviewFromEmployer,
-  Message
-
+  Message,
+  Event,
+  EventShares,
 };

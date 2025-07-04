@@ -164,7 +164,7 @@ const employerDetails = [
 const contractorDetails = [
   {
     user_id: 2,
-    job_category: 'Web Development, UI/UX Design',
+    job_category: 'Designer',
     work_experience: '5 years in front-end and back-end development, specializing in React and Node.js.',
     portfolio: 'https://portfolio.olena.com',
     section_title: 'React Developer',
@@ -178,11 +178,16 @@ const contractorDetails = [
       "https://www.linkedin.com/in/your-profile",
       "https://www.instagram.com/your-profile"
     ],
-
+    skills: [
+      "Figma",
+      "Sketch",
+      "Adobe XD",
+      "Photoshop",
+    ]
   },
   {
     user_id: 4,
-    job_category: 'Graphic Design, Branding',
+    job_category: 'Designer',
     work_experience: '3 years in graphic design, specializing in branding for small businesses.',
     portfolio: 'https://portfolio.ivan.com',
     section_title: 'Brand Designer',
@@ -196,11 +201,18 @@ const contractorDetails = [
       "https://www.linkedin.com/in/your-profile",
       "https://www.instagram.com/your-profile"
     ],
-
+    skills: [
+      "Figma",
+      "Sketch",
+      "Adobe XD",
+      "Photoshop",
+      "Illustrator",
+      "User Flow",
+    ]
   },
   {
     user_id: 6,
-    job_category: 'Software Engineering, Mobile Development',
+    job_category: 'Front end',
     work_experience: '4 years working with mobile apps (iOS, Android) and back-end development.',
     portfolio: 'https://portfolio.iryna.com',
     section_title: 'Mobile Developer',
@@ -214,11 +226,19 @@ const contractorDetails = [
       "https://www.linkedin.com/in/your-profile",
       "https://www.instagram.com/your-profile"
     ],
-
+    skills: [
+      " HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "TypeScript",
+      "Redux",
+      "Next.js"
+    ]
   },
   {
     user_id: 8,
-    job_category: 'Data Analysis, Machine Learning',
+    job_category: 'Content',
     work_experience: '2 years in data analysis and machine learning using Python and R.',
     portfolio: 'https://portfolio.oleh.com',
     section_title: 'Data Scientist',
@@ -232,6 +252,14 @@ const contractorDetails = [
       "https://www.linkedin.com/in/your-profile",
       "https://www.instagram.com/your-profile"
     ],
+    skills: [
+      "Copywriting",
+      "Proofreading",
+      "Content Strategy",
+      "Blog Writing",
+      "Storytelling",
+      "Content SEO"
+    ]
   },
 ];
 
