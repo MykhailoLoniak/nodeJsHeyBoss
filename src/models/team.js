@@ -9,9 +9,17 @@ const Team = client.define("team", {
     primaryKey: true,
     autoIncrement: true,
   },
+  company_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
   user_ids: {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
+  },
+  task_ids: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    allowNull: true,
   },
 
 }, {
@@ -19,4 +27,4 @@ const Team = client.define("team", {
   underscored: true,
 });
 
-module.exports = { ChatRoom };
+module.exports = { Team };

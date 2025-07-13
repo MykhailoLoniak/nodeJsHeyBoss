@@ -1,55 +1,23 @@
+// models/task.js
 const { DataTypes } = require('sequelize');
-const { client } = require('../utils/db.js');
-const { User } = require("./user");
-// const { UserChatRoom } = require('./userChatRoom.js');
+const { client } = require('../utils/db');
 
-const Task = client.define("task", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+const Task = client.define(
+  'task',
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    title: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT },
+    status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Open' },
+    deadline: { type: DataTypes.DATE },
+    archived: { type: DataTypes.BOOLEAN, defaultValue: false },
+    timers: { type: DataTypes.JSON, defaultValue: [] }
   },
-  user_ids: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
-    allowNull: false,
-  },
-  task_name: {
-    type: DataTypes.STRING,
-  },
-  description: {
-    type: DataTypes.STRING,
-  },
-  objectives: {
-    type: DataTypes.STRING,
-  },
-  deliverables: {
-    type: DataTypes.STRING,
-  },
-  optional: {
-    type: DataTypes.STRING,
-  },
-  google_link: {
-    type: DataTypes.STRING,
-  },
-  print: {
-    type: DataTypes.STRING,
-  },
-  photo: {
-    type: DataTypes.STRING,
-  },
-  file: {
-    type: DataTypes.STRING,
-  },
-  img: {
-    type: DataTypes.STRING,
-  },
-  doc: {
-    type: DataTypes.STRING,
-  },
+  {
+    tableName: 'tasks',
+    underscored: true,
+  }
+);
 
-}, {
-  tableName: "tasks",
-  underscored: true,
-});
-
-module.exports = { ChatRoom };
+module.exports = { Task };

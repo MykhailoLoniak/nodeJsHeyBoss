@@ -13,6 +13,10 @@ const { Project } = require('./project');
 const { Message } = require('./message');
 const { Event } = require('./event');
 const { EventShares } = require('./event_shares');
+const { Task } = require('./task');
+const { Attachment } = require('./attachment');
+const { ActivityLog } = require('./activityLog');
+const { Team } = require('./team')
 // const { JobExecutors } = require('./jobExecutors');
 
 ReviewFromJobSeeker.belongsTo(User, { as: 'jobSeeker', foreignKey: 'job_seeker_id' });
@@ -45,6 +49,15 @@ User.belongsToMany(ChatRoom, { through: UserChatRoom, foreignKey: "user_id" });
 Event.belongsTo(User, { foreignKey: 'user_id', as: 'organizer' });
 User.hasMany(Event, { foreignKey: 'user_id', as: 'createdEvents' });
 
+
+// Зв'язок Task ↔ Attachment
+Task.hasMany(Attachment, { foreignKey: 'task_id', as: 'attachments' });
+Attachment.belongsTo(Task, { foreignKey: 'task_id', as: 'task' });
+
+// Зв'язок Task ↔ ActivityLog
+Task.hasMany(ActivityLog, { foreignKey: 'task_id', as: 'activityLogs' });
+ActivityLog.belongsTo(Task, { foreignKey: 'task_id', as: 'task' });
+
 Event.belongsToMany(User, {
   through: EventShares,
   foreignKey: 'event_id',
@@ -56,6 +69,16 @@ User.belongsToMany(Event, {
   foreignKey: 'user_id',
   otherKey: 'event_id',
   as: 'attendingEvents'
+});
+
+User.hasMany(Task, {
+  foreignKey: 'user_id',
+  as: 'tasks'
+});
+
+Task.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'owner'
 });
 
 module.exports = {
@@ -73,4 +96,8 @@ module.exports = {
   Message,
   Event,
   EventShares,
+  Task,
+  Attachment,
+  Team,
+  ActivityLog
 };
