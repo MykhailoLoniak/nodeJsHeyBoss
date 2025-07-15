@@ -20,11 +20,11 @@ async function getAllTasks(query) {
   return tasks;
 }
 
-async function createTask(data) {
-  const task = await Task.create(data);
-  await ActivityLog.create({ task_id: task.id, action: 'created', data });
-  return task;
-}
+// async function createTask(data) {
+//   const task = await Task.create(data);
+//   await ActivityLog.create({ task_id: task.id, action: 'created', data });
+//   return task;
+// }
 
 async function getTaskById(taskId) {
   const task = await Task.findById(taskId).populate('assignee').lean();
@@ -196,7 +196,7 @@ const taskService = {
   deleteTask,
   updateTask,
   getTaskById,
-  createTask,
+  // createTask,
   getAllTasks,
 };
 

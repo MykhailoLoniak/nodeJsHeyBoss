@@ -1,12 +1,52 @@
 // controllers/tasksController.js
 // Контролери для обробки бізнес-логіки завдань
 
+const { ApiError } = require('../exceptions/api.error');
+const { Task, ActivityLog } = require('../models');
+const { jwtService } = require('../services/jwtService');
 const taskService = require('../services/taskService');
 
-// Визначення кожної функції окремо
+async function createTask(req, res, next) {
+  try {
+    // const { refresh_token } = req.cookies;
+
+    // if (!refresh_token) throw ApiError.notFound('Refresh token not found')
+
+    // const userData = await jwtService.verifyRefresh(refresh_token);
+
+    // if (!userData) throw ApiError.unauthorized("Invalid token")
+
+    // console.log("................................", req.body);
+
+    console.log("..........................", req.body);
+
+
+    const newTask = await Task.create(req.body);
+    await ActivityLog.create({ task_id: newTask.id, action: 'created', data: req.body });
+
+    res.status(201).json(newTask);
+  } catch (err) {
+    console.log("Error createTask ________________:", err);
+    next(err);
+  }
+}
+
 async function getAllTasks(req, res, next) {
   try {
-    const tasks = await taskService.getAllTasks(req.query);
+    const { page = 1, limit = 7, status, assignee, team } = req.query;
+
+    const where = {};
+    if (team) where.status = team;
+    if (status) where.status = status;
+    if (assignee) where.assignee = assignee;
+
+    const tasks = await Task.findAll({
+      where,
+      offset: (page - 1) * parseInt(limit, 10),
+      limit: parseInt(limit, 10),
+      order: [['created_at', 'DESC']],
+    });
+
     res.json(tasks);
   } catch (err) {
     console.log("Error getAllTasks ________________:", err);
@@ -14,15 +54,17 @@ async function getAllTasks(req, res, next) {
   }
 }
 
-async function createTask(req, res, next) {
-  try {
-    const newTask = await taskService.createTask(req.body);
-    res.status(201).json(newTask);
-  } catch (err) {
-    console.log("Error createTask ________________:", err);
-    next(err);
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
 
 async function getTaskById(req, res, next) {
   try {

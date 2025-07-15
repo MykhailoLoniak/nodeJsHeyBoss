@@ -44,10 +44,17 @@ if (PROD_ORIGIN) {
   allowedOrigins.push(PROD_ORIGIN);
 }
 // якщо ми не в проді (NODE_ENV !== 'production'), додаємо локалхост
-if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push(DEV_ORIGIN);
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   allowedOrigins.push(DEV_ORIGIN);
+// }
 
+//______________________
+allowedOrigins.push(DEV_ORIGIN); // дозволяємо localhost завжди
+
+if (PROD_ORIGIN) {
+  allowedOrigins.push(PROD_ORIGIN);
+}
+//______________________
 const corsOptions = {
   origin: (origin, callback) => {
     // запити без origin (Postman, curl) теж пропускаємо

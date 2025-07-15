@@ -17,10 +17,6 @@ const Team = client.define("team", {
     type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
   },
-  task_ids: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
-    allowNull: true,
-  },
 
 }, {
   tableName: "teams",

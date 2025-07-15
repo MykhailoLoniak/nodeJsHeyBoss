@@ -4,7 +4,7 @@ const { Team } = require('../models/team');
 
 async function createTeam(req, res) {
   try {
-    const { user_ids, task_ids } = req.body
+    const { user_ids } = req.body
     const { refresh_token } = req.cookies;
 
     if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
@@ -19,7 +19,6 @@ async function createTeam(req, res) {
     const team = await Team.create({
       company_id: userData.id,
       user_ids,
-      task_ids
     })
 
     res.json(team);
@@ -30,28 +29,28 @@ async function createTeam(req, res) {
 }
 
 
-async function addToTeam(req, res) {
-  try {
-    const { company_id, user_ids, task_ids } = req.body
-    const { refresh_token } = req.cookies;
+// async function addToTeam(req, res) {
+//   try {
+//     const { company_id, user_ids, task_ids } = req.body
+//     const { refresh_token } = req.cookies;
 
-    if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
+//     if (!refresh_token) throw ApiError.unauthorized("No refresh token provided");
 
-    let userData = await jwtService.verifyRefresh(refresh_token);
+//     let userData = await jwtService.verifyRefresh(refresh_token);
 
-    if (!userData) {
-      res.clearCookie("refresh_token");
-      throw ApiError.unauthorized("Invalid refresh token");
-    }
+//     if (!userData) {
+//       res.clearCookie("refresh_token");
+//       throw ApiError.unauthorized("Invalid refresh token");
+//     }
 
-    // const team = Team.findAll({where:{}})
+//     // const team = Team.findAll({where:{}})
 
-    res.json(tasks);
-  } catch (err) {
-    console.log("Error addToTeam ________________:", err);
-    next(err);
-  }
-}
+//     res.json(tasks);
+//   } catch (err) {
+//     console.log("Error addToTeam ________________:", err);
+//     next(err);
+//   }
+// }
 
 
 
@@ -74,7 +73,7 @@ async function addToTeam(req, res) {
 
 const controller = {
   createTeam,
-  addToTeam,
+  // addToTeam,
 };
 
 module.exports = controller;
